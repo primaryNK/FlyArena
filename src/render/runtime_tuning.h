@@ -43,12 +43,23 @@ constexpr PolicyMutationPermissions policy_mutation_permissions(
 
 constexpr uint32_t kTrainingSpeedOptionCount = 6;
 
-// A return value of 0 means MAX: no real-time target, while the configured GPU
-// duty budget still applies.
+// A return value of 0 means MAX: no wall-clock target and no GPU-duty sleep.
+// This deliberately lets MAX use all available compute.
 constexpr float training_speed_multiplier(uint32_t option) {
     constexpr float values[kTrainingSpeedOptionCount] = {
         1.0f, 2.0f, 4.0f, 8.0f, 16.0f, 0.0f};
     return values[option < kTrainingSpeedOptionCount ? option : 0];
+}
+
+// Battle and finite Training speeds retain pacing and the configured GPU-duty
+// budget. Only Training MAX returns the unlimited sentinel.
+constexpr float neural_pacing_multiplier(
+    bool training_enabled,
+    uint32_t option)
+{
+    return training_enabled
+        ? training_speed_multiplier(option)
+        : 1.0f;
 }
 
 constexpr double training_tick_target_wall_ms(

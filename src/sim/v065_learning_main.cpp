@@ -2012,14 +2012,13 @@ int simulation_thread_main(
 
         NeuralStepResult step;
 
-        const float requested_speed = red_learning_enabled
-            ? training_speed_multiplier(
-                tuning.training_speed_option.load())
-            : 1.0f;
+        const float requested_speed = neural_pacing_multiplier(
+            red_learning_enabled,
+            tuning.training_speed_option.load());
         if (!brain.advance(
                 cli.world_step_ms,
                 step, err,
-                0.0f))
+                requested_speed))
         {
             publish_status(
                 snapshots, sequence++,
@@ -2687,6 +2686,10 @@ int simulation_thread_main(
         << "requested_training_multiplier="
         << training_speed_multiplier(
             tuning.training_speed_option.load()) << "\n"
+        << "gpu_duty_target_percent=" << cli.gpu_budget * 100.0f << "\n"
+        << "max_training_bypasses_gpu_duty_limit="
+        << (red_learning_enabled
+            && tuning.training_speed_option.load() == 5 ? 1 : 0) << "\n"
         << "measured_simulation_multiplier="
         << tuning.measured_simulation_multiplier.load() << "\n"
         << "training_ticks=" << training_ticks << "\n"
@@ -2809,10 +2812,9 @@ int main(int argc, char** argv) {
     {
         MessageBoxW(
             nullptr,
-            L"FlyArena에 필요한 BANC 실행 데이터가 아직 없습니다.\n\n"
-            L"압축을 푼 폴더의 SETUP_DATA_AND_RUN.bat를 실행하세요.\n"
-            L"인터넷 연결과 Python 3가 필요하며, 최초 한 번만 다운로드와 변환을 수행합니다.\n\n"
-            L"Required BANC runtime data is missing. Run SETUP_DATA_AND_RUN.bat from the extracted folder.",
+            L"Required BANC runtime data is missing.\n\n"
+            L"Run SETUP_DATA_AND_RUN.bat from the extracted FlyArena folder.\n"
+            L"Internet access and Python 3 are required for the first-time download and conversion.",
             L"FlyArena data setup required",
             MB_OK | MB_ICONINFORMATION);
         return 2;

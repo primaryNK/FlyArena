@@ -221,6 +221,11 @@ void test_training_slot_commands() {
         "Training speed options changed their multiplier mapping");
     require(training_speed_multiplier(5) == 0.0f,
         "MAX Training speed retained a real-time pacing target");
+    require(neural_pacing_multiplier(true, 4) == 16.0f
+            && neural_pacing_multiplier(false, 5) == 1.0f,
+        "finite Training/Battle lost neural GPU-duty pacing");
+    require(neural_pacing_multiplier(true, 5) == 0.0f,
+        "Training MAX stopped using the unlimited-compute sentinel");
 
     const auto random_permissions = policy_mutation_permissions(
         AppMode::Training, TrainingSubmode::RandomTrainer);

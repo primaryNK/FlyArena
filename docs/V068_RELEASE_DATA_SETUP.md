@@ -8,8 +8,10 @@ BANC v888, converts the topology, builds the IO map, and launches FlyArena.
 Completed files are reused. `START_FLYARENA.bat` validates both generated files
 before later launches.
 
-Directly launching `FlyArena.exe` without data now shows a bilingual setup
-message rather than an internal topology-cache error. Runtime-root discovery
+Directly launching `FlyArena.exe` without data now shows an English-only setup
+message rather than an internal topology-cache error. Keeping this startup
+dialog ASCII-only avoids corrupted Korean text on machines whose compiler or
+system code page differs. Runtime-root discovery
 supports both source-build `bin\` layout and a portable ZIP with the executable
 at its root.
 
@@ -26,6 +28,12 @@ renders at 4 FPS, and publishes a status heartbeat every 250 ms of wall time.
 The display freezes both flies at their opposing spawn locations while showing
 episode number, actual simulated time and measured throughput. The hidden
 physical fight and learning continue at the hardware limit.
+
+GPU duty behavior is now explicit: 1x–16x Training and Battle honor the
+configured `--gpu-budget` (40% in the supplied launchers), including inside the
+neural dispatch loop. MAX intentionally bypasses that duty sleep and can show
+near-100% GPU usage because its purpose is maximum-throughput learning. Select
+16x or lower when temperature, fan noise, or power use matters more than speed.
 
 ## Spawn, sword reach, and wing hitboxes
 
