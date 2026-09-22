@@ -15,12 +15,17 @@ system code page differs. Runtime-root discovery
 supports both source-build `bin\` layout and a portable ZIP with the executable
 at its root.
 
-Windows release builds carry explicit PE version information and an as-invoker
+Windows builds carry explicit PE version information and an as-invoker
 application manifest, use Control Flow Guard and modern linker hardening, and
 are built on GitHub's current Windows 2025 / Visual Studio 2026 image. CI and
-tagged releases run a Microsoft Defender command-line scan before publishing an
-executable artifact. This is a defense-in-depth and false-positive prevention
-measure; it is not a substitute for future Authenticode signing.
+tagged builds run a Microsoft Defender command-line scan. However, the same
+v0.6.8 executable that passes those local scans is classified as
+`Trojan:Win32/Wacatac.B!ml` by Defender's Internet-origin cloud reputation
+path. The current evidence suggests a false positive, but that conclusion is
+not final until Microsoft analyzes the sample. The public Windows artifact is
+therefore withheld; tagged releases are source-only until Microsoft clears the
+detection or the executable is Authenticode-signed by a trusted identity.
+Users should not bypass Defender.
 
 ## Full-loop training speed
 

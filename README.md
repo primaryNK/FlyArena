@@ -44,13 +44,19 @@ The public tree keeps only the current v0.6.8 build/test entry points.
 
 ## 처음 사용하는 분
 
-1. GitHub Releases에서 `FlyArena-v0.6.8-Windows-x64.zip`을 받습니다.
-2. 압축을 풀고 `SETUP_DATA_AND_RUN.bat`를 실행합니다. BANC 원자료는
-   크기와 별도 라이선스 때문에 ZIP에 포함되지 않으며, 이 배치가 최초 한 번
-   다운로드·변환·IO 맵 생성을 마친 뒤 FlyArena를 실행합니다.
-3. 다음 실행부터는 `START_FLYARENA.bat`를 사용합니다.
-4. `CREATE FLY`에서 초파리를 만들고 `TRAINING`으로 학습한 뒤 `BATTLE`로
-   학습이 고정된 상태를 확인합니다.
+> **Windows 실행 파일 배포 일시 중단:** 현재 서명되지 않은 v0.6.8 실행
+> 파일은 로컬 및 GitHub Actions의 Microsoft Defender 검사를 통과하지만,
+> 인터넷에서 내려받을 때 Defender 클라우드 검사에서
+> `Trojan:Win32/Wacatac.B!ml`로 탐지됩니다. 현재 조사 결과로는 오탐이
+> 의심되지만 Microsoft 분석 전에는 확정할 수 없습니다. 경고를 무시하거나
+> Defender를 끄지 마세요. 탐지 해제 또는 신뢰할 수 있는 Authenticode 서명이
+> 완료될 때까지 Release에는 검증 가능한 소스 ZIP만 제공합니다.
+
+개발자는 아래 빌드 명령으로 소스에서 직접 빌드할 수 있습니다. 일반 사용자는
+Microsoft 분석을 통과한 Windows 바이너리가 다시 게시될 때까지 기다려
+주세요. Windows ZIP이
+복구된 뒤에는 압축을 풀어 `SETUP_DATA_AND_RUN.bat`를 최초 한 번 실행하고,
+이후 `START_FLYARENA.bat`를 사용하면 됩니다.
 
 설치, 데이터 준비, MAX 학습, 파일 종류와 문제 해결은
 [한국어 시작 안내](docs/GETTING_STARTED_KO.md)에 정리했습니다.
@@ -165,8 +171,8 @@ BANC 데이터와 논문은 FlyArena 소유가 아니며 각 원 권리자의 �
 
 ## Public release status
 
-Windows CI, 최종본 소스 스테이징, 태그 기반 실행 파일/소스 ZIP 패키징,
-SHA-256 체크섬, 인용 정보와 이슈 양식이 준비되어 있습니다. 실제 공개 전에는
-권리자 표기와 연락 수단을 확정하고 깨끗한 Windows 환경에서 최종 실행 검증이
-필요합니다. 첫 push와 태그 배포 순서는
+Windows 빌드·테스트·로컬 Defender 검사, 최종본 소스 스테이징, 태그 기반
+소스 ZIP, SHA-256 체크섬, 인용 정보와 이슈 양식이 준비되어 있습니다. 현재
+서명되지 않은 실행 파일은 Defender의 인터넷 다운로드 탐지가 해결될 때까지
+CI artifact와 Release에서 공개하지 않습니다. 첫 push와 태그 배포 순서는
 [GitHub 공개·배포 안내](docs/GITHUB_RELEASE_KO.md)를 따라가면 됩니다.

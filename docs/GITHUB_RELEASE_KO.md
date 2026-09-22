@@ -53,7 +53,7 @@ git remote -v
 git push -u origin main
 ```
 
-## 4. v0.6.8 자동 Release 만들기
+## 4. v0.6.8 자동 Source Release 만들기
 
 `main`의 CI가 성공한 것을 확인한 뒤 서명 설명 태그를 push합니다.
 
@@ -62,17 +62,24 @@ git tag -a v0.6.8 -m "FlyArena v0.6.8"
 git push origin v0.6.8
 ```
 
-`.github/workflows/release.yml`이 Windows에서 다시 빌드·테스트하고 다음을
-GitHub Release에 첨부합니다.
+`.github/workflows/release.yml`이 Windows에서 다시 빌드·테스트하고 현재는
+다음만 GitHub Release에 첨부합니다.
 
-- `FlyArena-v0.6.8-Windows-x64.zip`
 - `FlyArena-v0.6.8-Source.zip`
 - `SHA256SUMS.txt`
 
-GitHub 저장소의 **Actions** 탭에서 `Tagged Windows Release`가 성공했는지
-확인하고, **Releases**에서 세 파일과 체크섬을 확인합니다. 태그를 push하기
+GitHub 저장소의 **Actions** 탭에서 `Tagged Source Release`가 성공했는지
+확인하고, **Releases**에서 소스 파일과 체크섬을 확인합니다. 태그를 push하기
 전에 버전 파일을 커밋해야 하며, 동일한 공개 태그를 나중에 다른 커밋으로
 옮기지 않는 것이 좋습니다.
+
+서명되지 않은 v0.6.8 실행 파일은 로컬·CI Defender 검사를 통과하지만
+인터넷 다운로드 시 클라우드 검사에서 `Trojan:Win32/Wacatac.B!ml`로
+탐지됩니다. 조사상 오탐이 의심되지만 Microsoft 분석 전에는 확정할 수
+없으므로 CI artifact와 Windows Release ZIP 자동 공개는 의도적으로
+꺼 두었습니다. 단순히 ZIP 형식을 바꾸거나 사용자에게 Defender 해제를
+안내하지 말고, Microsoft 분석·탐지 해제 또는 신뢰할 수 있는 Authenticode 서명
+뒤에만 바이너리 배포 단계를 복구하세요.
 
 ## 5. 수동 배포가 필요할 때
 
@@ -85,6 +92,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\package_release.ps1 
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\stage_public_source.ps1 -Version v0.6.8
 ```
 
-생성된 `dist`의 ZIP 두 개와 `SHA256SUMS.txt`를 GitHub Release에 첨부합니다.
+현재 공개 Release에는 `stage_public_source.ps1`이 만든 Source ZIP과 해당
+`SHA256SUMS.txt`만 첨부합니다. `package_release.ps1`의 Windows ZIP은 로컬
+검증용으로만 유지하며, Microsoft 탐지 해제나 코드 서명 전에는 업로드하지 마세요.
 Release는 Git 태그가 가리키는 소스 시점의 배포판이므로, 로컬 수정본을
-커밋하지 않은 채 다른 바이너리만 올리지 마세요.
+커밋하지 않은 채 다른 파일을 올리지 마세요.

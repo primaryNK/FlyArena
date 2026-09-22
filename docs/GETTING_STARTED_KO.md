@@ -13,12 +13,22 @@ FlyArena가 가정한 신경 동역학과 감각·운동 연결을 물리 전투
 
 ## 가장 빠른 실행 방법
 
-1. GitHub Releases에서 Windows x64 ZIP을 받습니다.
-2. 원하는 폴더에 압축을 풉니다.
-3. `SETUP_DATA_AND_RUN.bat`를 실행합니다. Python 3와 인터넷 연결이
+현재 v0.6.8 Windows ZIP은 배포를 일시 중단했습니다. 실행 파일 자체의 로컬
+Defender 검사와 CI 검사는 통과했지만, 인터넷에서 내려받은 서명되지 않은
+파일을 Defender 클라우드가 `Trojan:Win32/Wacatac.B!ml`로 탐지합니다. 현재
+조사상 오탐이 의심되지만 Microsoft 분석 전에는 확정할 수 없습니다.
+경고를 무시하거나 보안 기능을 끄지 마세요. Release의 Source ZIP은 코드를
+검토하거나 직접 빌드하려는 개발자를 위한 것이며, 일반 사용자는 Microsoft
+분석·탐지 해제 또는 코드 서명 뒤 Windows ZIP이 다시 게시될 때까지 기다리는
+것을 권장합니다.
+
+Windows ZIP 배포가 복구되면 다음 순서로 실행합니다.
+
+1. 원하는 폴더에 압축을 풉니다.
+2. `SETUP_DATA_AND_RUN.bat`를 실행합니다. Python 3와 인터넷 연결이
    필요하며, BANC 다운로드→캐시 변환→입출력 맵 생성→게임 실행을 순서대로
    처리합니다. 원자료 라이선스는 `DATA_LICENSES.txt`에서 확인할 수 있습니다.
-4. 이후에는 `START_FLYARENA.bat`를 실행합니다.
+3. 이후에는 `START_FLYARENA.bat`를 실행합니다.
 
 BANC 원자료와 생성 캐시는 용량 및 라이선스 구분 때문에 배포 ZIP과 Git에
 들어 있지 않습니다. 한 번 생성한 캐시는 매 라운드 다시 읽지 않으며, 같은

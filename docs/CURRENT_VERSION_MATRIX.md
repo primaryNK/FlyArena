@@ -6,7 +6,9 @@ Build/test validated on Windows on 2026-09-22:
 
 - `build_v068.bat` produces `bin/FlyArena-v0.6.8.exe`
 - `test_v068_profile_learning.bat` passes
-- portable Release includes one-click BANC topology/IO setup and a validated launcher
+- the locally built portable package includes one-click BANC topology/IO setup
+  and a validated launcher; its unsigned public Windows download is withheld
+  while a suspected Defender cloud false positive is investigated
 - BANC/GPU/calibration state remains resident across repeated rounds
 - Training 1x–16x pace the complete world loop; `MAX` removes wall-clock
   pacing, uses a 4 FPS frozen-spawn status view, and decimates visual/CSV work
@@ -21,8 +23,9 @@ Build/test validated on Windows on 2026-09-22:
 - Create Fly exposes the linked sword, wings, and shield trade-offs
 - `.flypack` v4 stores separate two-color gradients for body/wings/sword/shield
   and built-in skin IDs 0..5; v1/v2/v3 remain readable
-- repository-local Git, Windows CI, tag release packaging, checksums, citation,
-  FASL-1.0 notices, clean-source staging, and issue templates are prepared
+- repository-local Git, Windows CI, source-only tag release packaging,
+  checksums, citation, FASL-1.0 notices, clean-source staging, and issue
+  templates are prepared
 
 ## v0.6.3 series
 Established:

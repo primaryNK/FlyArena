@@ -1,4 +1,4 @@
-name: Tagged Windows Release
+name: Tagged Source Release
 
 on:
   push:
@@ -44,10 +44,9 @@ jobs:
             throw "Microsoft Defender rejected the application (exit $LASTEXITCODE)."
           }
 
-      - name: Build portable and clean-source ZIPs
+      - name: Build clean-source ZIP
         shell: pwsh
         run: |
-          ./tools/package_release.ps1 -Version '${{ github.ref_name }}'
           ./tools/stage_public_source.ps1 -Version '${{ github.ref_name }}'
 
       - name: Publish GitHub Release
@@ -56,9 +55,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = '${{ github.ref_name }}'
+          $sourceArchive = "dist/FlyArena-$tag-Source.zip"
           gh release view $tag *> $null
           if ($LASTEXITCODE -eq 0) {
-            gh release upload $tag dist/*.zip dist/SHA256SUMS.txt --clobber
+            gh release upload $tag $sourceArchive dist/SHA256SUMS.txt --clobber
           } else {
-            gh release create $tag dist/*.zip dist/SHA256SUMS.txt --generate-notes --verify-tag
+            gh release create $tag $sourceArchive dist/SHA256SUMS.txt --generate-notes --verify-tag
           }
