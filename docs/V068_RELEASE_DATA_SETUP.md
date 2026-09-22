@@ -15,6 +15,13 @@ system code page differs. Runtime-root discovery
 supports both source-build `bin\` layout and a portable ZIP with the executable
 at its root.
 
+Windows release builds carry explicit PE version information and an as-invoker
+application manifest, use Control Flow Guard and modern linker hardening, and
+are built on GitHub's current Windows 2025 / Visual Studio 2026 image. CI and
+tagged releases run a Microsoft Defender command-line scan before publishing an
+executable artifact. This is a defense-in-depth and false-positive prevention
+measure; it is not a substitute for future Authenticode signing.
+
 ## Full-loop training speed
 
 Training 1x, 2x, 4x, 8x and 16x now pace the complete 50 ms world tick. Neural

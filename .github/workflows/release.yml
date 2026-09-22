@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   release:
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     steps:
       - uses: actions/checkout@v4
 
@@ -30,6 +30,19 @@ jobs:
           call build_v068.bat
           if errorlevel 1 exit /b 1
           call test_v068_profile_learning.bat
+
+      - name: Scan application with Microsoft Defender
+        shell: pwsh
+        run: |
+          $scanner = Join-Path $env:ProgramFiles 'Windows Defender\MpCmdRun.exe'
+          if (-not (Test-Path -LiteralPath $scanner)) {
+            throw 'Microsoft Defender command-line scanner is unavailable.'
+          }
+          $target = (Resolve-Path 'bin\FlyArena-v0.6.8.exe').Path
+          & $scanner -Scan -ScanType 3 -File $target -DisableRemediation
+          if ($LASTEXITCODE -ne 0) {
+            throw "Microsoft Defender rejected the application (exit $LASTEXITCODE)."
+          }
 
       - name: Build portable and clean-source ZIPs
         shell: pwsh

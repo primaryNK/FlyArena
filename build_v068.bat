@@ -9,9 +9,13 @@ call "%VSINSTALL%\Common7\Tools\VsDevCmd.bat" -arch=x64 >nul
 if errorlevel 1 exit /b 1
 if not exist "%ROOT%bin" mkdir "%ROOT%bin"
 if not exist "%ROOT%obj\v068" mkdir "%ROOT%obj\v068"
+pushd "%ROOT%src\shared"
+rc /nologo /fo "%ROOT%obj\v068\flyarena_version.res" flyarena_version.rc
+if errorlevel 1 ( popd & exit /b 1 )
+popd
 pushd "%ROOT%obj\v068"
 echo Building FlyArena v0.6.8...
-cl /nologo /O2 /std:c++20 /EHsc /DNDEBUG /DNOMINMAX /DUNICODE /D_UNICODE /DFLYARENA_PRODUCT_UI /W4 ^
+cl /nologo /O2 /std:c++20 /EHsc /DNDEBUG /DNOMINMAX /DUNICODE /D_UNICODE /DFLYARENA_PRODUCT_UI /W4 /guard:cf ^
   /I"%ROOT%src\shared" /I"%ROOT%src\neural" /I"%ROOT%src\io" /I"%ROOT%src\arena" /I"%ROOT%src\render" /I"%ROOT%src\learning" /I"%ROOT%src\profile" /I"%ROOT%src\ui" ^
   /Fo"%ROOT%obj\v068\\" ^
   "%ROOT%src\shared\topology_v2.cpp" ^
@@ -25,8 +29,10 @@ cl /nologo /O2 /std:c++20 /EHsc /DNDEBUG /DNOMINMAX /DUNICODE /D_UNICODE /DFLYAR
   "%ROOT%src\learning\plastic_readout.cpp" ^
   "%ROOT%src\render\win32_renderer.cpp" ^
   "%ROOT%src\sim\v065_learning_main.cpp" ^
+  "%ROOT%obj\v068\flyarena_version.res" ^
   d3d12.lib dxgi.lib d3dcompiler.lib d2d1.lib dwrite.lib user32.lib gdi32.lib winmm.lib ole32.lib comdlg32.lib ^
-  /Fe:"%ROOT%bin\FlyArena-v0.6.8.exe"
+  /Fe:"%ROOT%bin\FlyArena-v0.6.8.exe" ^
+  /link /DYNAMICBASE /NXCOMPAT /HIGHENTROPYVA /CETCOMPAT /guard:cf /Brepro
 if errorlevel 1 ( popd & exit /b 1 )
 popd
 echo.

@@ -64,6 +64,8 @@ src/render/runtime_tuning.h
 src/render/win32_renderer.cpp
 src/render/win32_renderer.h
 src/shared/flyarena_format.h
+src/shared/flyarena.manifest
+src/shared/flyarena_version.rc
 src/shared/topology_v2.cpp
 src/shared/topology_v2.h
 src/sim/v065_learning_main.cpp

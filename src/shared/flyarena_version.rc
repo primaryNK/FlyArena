@@ -1,0 +1,37 @@
+#include <windows.h>
+
+#define FLYARENA_VERSION_NUM 0,6,8,0
+#define FLYARENA_VERSION_TEXT "0.6.8.0\0"
+
+1 RT_MANIFEST "flyarena.manifest"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION FLYARENA_VERSION_NUM
+ PRODUCTVERSION FLYARENA_VERSION_NUM
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS VS_FF_DEBUG
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "FlyArena BANC neural combat simulator\0"
+            VALUE "FileVersion", FLYARENA_VERSION_TEXT
+            VALUE "InternalName", "FlyArena\0"
+            VALUE "OriginalFilename", "FlyArena.exe\0"
+            VALUE "ProductName", "FlyArena\0"
+            VALUE "ProductVersion", FLYARENA_VERSION_TEXT
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END
