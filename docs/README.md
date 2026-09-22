@@ -8,8 +8,8 @@
 
 ## 현재 설계와 사용 규칙
 
-- `V067_ACCELERATION_COMBAT_CUSTOMIZATION.md` — full-loop/MAX speed, opposing
-  spawns, swept sword collision, and Flypack v4 component gradients
+- `V068_RELEASE_DATA_SETUP.md` — one-click Release data setup, full-loop/MAX
+  speed, opposing spawns, swept sword collision, and Flypack v4 gradients
 
 ## Final milestone (after feature stabilization)
 
@@ -31,6 +31,6 @@
 - `V063_COMBAT_FEEDBACK_CONTRACT.md`
 
 When older architecture notes disagree with the current working tree, use the
-code, `CURRENT_VERSION_MATRIX.md`, and the v0.6.7 change note as the operational
+code, `CURRENT_VERSION_MATRIX.md`, and the v0.6.8 change note as the operational
 reference. Historical experiment notes are intentionally absent from the
 public release.

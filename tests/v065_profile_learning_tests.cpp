@@ -460,6 +460,67 @@ void test_v064d_combat_contract() {
     require(defender.hp == hp_before - combat.sword_hit_damage, "active sword swing did not damage body");
     require(events.size() == 1 && events[0].type == CombatEventType::Hit, "active sword collision was not classified HIT");
 
+    // Reach must come from the customized physical blade length. Keep the
+    // defender's wings pointed away so this isolates sword reach from the new
+    // wing capsules.
+    events.clear();
+    FlyBodyState short_attacker = make_attack();
+    short_attacker.equipment.sword.length_scale = 0.60f;
+    FlyBodyState reach_defender;
+    reach_defender.identity.name = "ReachDefender";
+    reach_defender.position = {0.18f, -0.0135f};
+    reach_defender.heading_rad = 3.14159265f;
+    resolve_equipment_combat(
+        short_attacker, reach_defender, arena.fly_radius,
+        combat, 1.1, event_id, events);
+    require(reach_defender.hp == reach_defender.max_hp && events.empty(),
+        "minimum-length sword reached beyond its canonical blade tip");
+
+    events.clear();
+    FlyBodyState long_attacker = make_attack();
+    long_attacker.equipment.sword.length_scale = 1.80f;
+    reach_defender = FlyBodyState{};
+    reach_defender.identity.name = "ReachDefender";
+    reach_defender.position = {0.18f, -0.0135f};
+    reach_defender.heading_rad = 3.14159265f;
+    resolve_equipment_combat(
+        long_attacker, reach_defender, arena.fly_radius,
+        combat, 1.2, event_id, events);
+    require(reach_defender.hp == reach_defender.max_hp
+                - combat.sword_hit_damage
+            && events.size() == 1
+            && events[0].type == CombatEventType::Hit,
+        "maximum-length sword did not gain its canonical physical reach");
+
+    // A blade that misses the circular body can hit a visible wing. The same
+    // wing-size parameter must expand both rendering and collision geometry.
+    events.clear();
+    FlyBodyState small_wing_attacker = make_attack();
+    FlyBodyState wing_defender;
+    wing_defender.identity.name = "WingDefender";
+    wing_defender.position = {0.17f, 0.055f};
+    wing_defender.equipment.wings.size_scale = 0.65f;
+    resolve_equipment_combat(
+        small_wing_attacker, wing_defender, arena.fly_radius,
+        combat, 1.3, event_id, events);
+    require(wing_defender.hp == wing_defender.max_hp && events.empty(),
+        "minimum-size wing hitbox exceeded its canonical silhouette");
+
+    events.clear();
+    FlyBodyState large_wing_attacker = make_attack();
+    wing_defender = FlyBodyState{};
+    wing_defender.identity.name = "WingDefender";
+    wing_defender.position = {0.17f, 0.055f};
+    wing_defender.equipment.wings.size_scale = 1.60f;
+    resolve_equipment_combat(
+        large_wing_attacker, wing_defender, arena.fly_radius,
+        combat, 1.4, event_id, events);
+    require(wing_defender.hp == wing_defender.max_hp
+                - combat.sword_hit_damage
+            && events.size() == 1
+            && events[0].type == CombatEventType::Hit,
+        "sword passed through the canonical large-wing hitbox");
+
     // The final powered substep remains hittable even though step_equipment
     // transitions the state to Recovery at the end of that same substep.
     FlyBodyState terminal_swing;

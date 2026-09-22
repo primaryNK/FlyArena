@@ -12,15 +12,15 @@ jobs:
 
       - name: Build FlyArena
         shell: cmd
-        run: build_v067.bat
+        run: build_v068.bat
 
       - name: Run portable behavior tests
         shell: cmd
-        run: test_v067_profile_learning.bat
+        run: test_v068_profile_learning.bat
 
       - name: Upload application artifact
         uses: actions/upload-artifact@v4
         with:
           name: FlyArena-Windows-x64-CI
-          path: bin/FlyArena-v0.6.7.exe
+          path: bin/FlyArena-v0.6.8.exe
           if-no-files-found: error

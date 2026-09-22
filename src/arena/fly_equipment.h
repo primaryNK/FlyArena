@@ -48,6 +48,15 @@ constexpr float kBaseSwordMass = 0.12f;
 constexpr float kBaseShieldRadiusWorld = 0.042f;
 constexpr float kBaseShieldMass = 0.22f;
 
+// Canonical gameplay wing hitbox, expressed in body-radius units. Each wing
+// is a capsule from root to tip. These are tuned arena geometry, not measured
+// Drosophila anatomy. Cosmetic skin details do not change this hitbox.
+constexpr float kWingHitRootForwardBodyRadii = 0.40f;
+constexpr float kWingHitRootLateralBodyRadii = 0.70f;
+constexpr float kWingHitTipForwardBodyRadii = -2.65f;
+constexpr float kWingHitTipLateralBodyRadii = 1.70f;
+constexpr float kWingHitRadiusBodyRadii = 0.75f;
+
 inline float sword_length_world(const FlyEquipment& e) {
     return kBaseSwordLengthWorld * std::clamp(e.sword.length_scale,0.60f,1.80f);
 }

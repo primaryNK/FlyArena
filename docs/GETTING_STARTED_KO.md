@@ -15,11 +15,10 @@ FlyArena가 가정한 신경 동역학과 감각·운동 연결을 물리 전투
 
 1. GitHub Releases에서 Windows x64 ZIP을 받습니다.
 2. 원하는 폴더에 압축을 풉니다.
-3. `prepare_banc_latest.bat`으로 BANC 캐시를 준비합니다. Python과 인터넷
-   연결이 필요할 수 있으며 원자료의 라이선스는 `DATA_LICENSES.txt`에서
-   확인할 수 있습니다.
-4. `prepare_v061_io_map.bat`으로 입출력 맵을 준비합니다.
-5. `FlyArena.exe`를 실행합니다.
+3. `SETUP_DATA_AND_RUN.bat`를 실행합니다. Python 3와 인터넷 연결이
+   필요하며, BANC 다운로드→캐시 변환→입출력 맵 생성→게임 실행을 순서대로
+   처리합니다. 원자료 라이선스는 `DATA_LICENSES.txt`에서 확인할 수 있습니다.
+4. 이후에는 `START_FLYARENA.bat`를 실행합니다.
 
 BANC 원자료와 생성 캐시는 용량 및 라이선스 구분 때문에 배포 ZIP과 Git에
 들어 있지 않습니다. 한 번 생성한 캐시는 매 라운드 다시 읽지 않으며, 같은
@@ -62,17 +61,18 @@ BANC 원자료와 생성 캐시는 용량 및 라이선스 구분 때문에 배�
 Windows, Visual Studio의 C++ x64 도구와 Windows SDK가 필요합니다.
 
 ```bat
-build_v067.bat
-test_v067_profile_learning.bat
+build_v068.bat
+test_v068_profile_learning.bat
 ```
 
-성공하면 `bin\FlyArena-v0.6.7.exe`가 만들어집니다.
+성공하면 `bin\FlyArena-v0.6.8.exe`가 만들어집니다.
 
 ## 문제가 생기면
 
 - 빌드 도구를 찾지 못함: Visual Studio Installer에서 Desktop development
   with C++와 Windows SDK를 설치합니다.
-- BANC/IO 파일을 찾지 못함: 위의 두 준비 배치를 순서대로 실행합니다.
+- `topology load failed` 또는 BANC/IO 파일을 찾지 못함:
+  `SETUP_DATA_AND_RUN.bat`를 한 번 실행합니다.
 - MAX에서 화면이 뜸하게 보임: 정상입니다. 학습 계산에 자원을 집중하도록
   상태 확인용 heartbeat만 가끔 보냅니다.
 - 버그 신고: 버전, 재현 순서, 오류 문구, GPU/Windows 정보를 적되 개인

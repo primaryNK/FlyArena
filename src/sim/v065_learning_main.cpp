@@ -165,17 +165,32 @@ void select_portable_runtime_root() {
 
     const fs::path executable(
         std::wstring(executable_path.data(), length));
-    const fs::path candidate_root =
-        executable.parent_path().parent_path();
-    ec.clear();
-    if (!fs::exists(candidate_root / default_topology, ec))
-        return;
+    // Source builds place the executable in bin\; portable releases place it
+    // beside data\. Accept both layouts, even before the cache exists, by
+    // recognizing the packaged data/tools skeleton.
+    const fs::path executable_directory = executable.parent_path();
+    const fs::path candidates[] = {
+        executable_directory,
+        executable_directory.parent_path()
+    };
+    for (const fs::path& candidate_root : candidates) {
+        ec.clear();
+        const bool has_topology =
+            fs::exists(candidate_root / default_topology, ec);
+        ec.clear();
+        const bool has_package_skeleton =
+            fs::exists(candidate_root / "data", ec)
+            && fs::exists(candidate_root / "tools", ec);
+        if (!has_topology && !has_package_skeleton)
+            continue;
 
-    fs::current_path(candidate_root, ec);
-    if (!ec) {
-        std::cout
-            << "[INFO] Runtime root: "
-            << candidate_root.string() << "\n";
+        fs::current_path(candidate_root, ec);
+        if (!ec) {
+            std::cout
+                << "[INFO] Runtime root: "
+                << candidate_root.string() << "\n";
+        }
+        return;
     }
 }
 
@@ -1636,7 +1651,7 @@ int simulation_thread_main(
     FlyProfile red_profile;
     red_profile.identity.name = cli.red_name;
     red_profile.identity.uuid = "legacy-ruby-v065";
-    red_profile.identity.lineage = "v0.6.7-default";
+    red_profile.identity.lineage = "v0.6.8-default";
     red_profile.equipment.body_skin_id = 1;
     red_profile.equipment.wings.skin_id = 1;
     red_profile.equipment.sword.skin_id = 1;
@@ -1649,7 +1664,7 @@ int simulation_thread_main(
     FlyProfile blue_profile;
     blue_profile.identity.name = cli.blue_name;
     blue_profile.identity.uuid = "legacy-azure-v065";
-    blue_profile.identity.lineage = "v0.6.7-default";
+    blue_profile.identity.lineage = "v0.6.8-default";
     blue_profile.equipment.body_skin_id = 2;
     blue_profile.equipment.wings.skin_id = 2;
     blue_profile.equipment.sword.skin_id = 2;
@@ -2546,7 +2561,7 @@ int simulation_thread_main(
         << std::setprecision(6);
 
     summary
-        << "FlyArena v0.6.7 full-loop accelerated plastic-readout arena\n"
+        << "FlyArena v0.6.8 portable-data-setup arena\n"
         << "combat_telemetry_schema_version=3\n"
         << "session_mode="
         << (open_ended ? "window_lifetime" : "finite") << "\n"
@@ -2713,6 +2728,8 @@ int simulation_thread_main(
         << "blue_shield_secondary_color_rgb=" << blue.equipment.shield.secondary_color_rgb << "\n"
         << "red_sword_length_scale=" << red.equipment.sword.length_scale << "\n"
         << "blue_sword_length_scale=" << blue.equipment.sword.length_scale << "\n"
+        << "red_sword_length_world=" << sword_length_world(red.equipment) << "\n"
+        << "blue_sword_length_world=" << sword_length_world(blue.equipment) << "\n"
         << "red_sword_recovery_scale=" << red.equipment.sword.recovery_scale << "\n"
         << "blue_sword_recovery_scale=" << blue.equipment.sword.recovery_scale << "\n"
         << "red_wing_size_scale=" << red.equipment.wings.size_scale << "\n"
@@ -2782,8 +2799,23 @@ int main(int argc, char** argv) {
 
     if (!parse(argc, argv, cli)) {
         std::cerr
-            << "FlyArena v0.6.7 arguments invalid.\n";
+            << "FlyArena v0.6.8 arguments invalid.\n";
         return 1;
+    }
+
+    std::error_code data_error;
+    if (!fs::exists(cli.topology, data_error)
+        || !fs::exists(cli.io_map, data_error))
+    {
+        MessageBoxW(
+            nullptr,
+            L"FlyArena에 필요한 BANC 실행 데이터가 아직 없습니다.\n\n"
+            L"압축을 푼 폴더의 SETUP_DATA_AND_RUN.bat를 실행하세요.\n"
+            L"인터넷 연결과 Python 3가 필요하며, 최초 한 번만 다운로드와 변환을 수행합니다.\n\n"
+            L"Required BANC runtime data is missing. Run SETUP_DATA_AND_RUN.bat from the extracted folder.",
+            L"FlyArena data setup required",
+            MB_OK | MB_ICONINFORMATION);
+        return 2;
     }
 
     SnapshotBuffer snapshots;

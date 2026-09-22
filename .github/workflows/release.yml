@@ -27,9 +27,9 @@ jobs:
       - name: Build and test
         shell: cmd
         run: |
-          call build_v067.bat
+          call build_v068.bat
           if errorlevel 1 exit /b 1
-          call test_v067_profile_learning.bat
+          call test_v068_profile_learning.bat
 
       - name: Build portable and clean-source ZIPs
         shell: pwsh

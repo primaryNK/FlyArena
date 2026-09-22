@@ -18,7 +18,7 @@ $Files = @(
 )
 
 Write-Host "============================================================"
-Write-Host " FlyArena v0.5.2c - Latest BANC pipeline"
+Write-Host " FlyArena - BANC v888 one-time data setup"
 Write-Host "============================================================"
 Write-Host "Anatomy      : BANC materialization v888"
 Write-Host "Connectivity : synapses v3 (latest simple edgelist)"
@@ -127,4 +127,4 @@ Write-Host "SUCCESS"
 Write-Host "  data\cache\banc_latest_v888_v3.farena"
 Write-Host "  data\cache\banc_latest_v888_v3_manifest.json"
 Write-Host ""
-Write-Host "Next: build_v052.bat"
+Write-Host "Next: prepare_v061_io_map.bat (or continue SETUP_DATA_AND_RUN.bat)"

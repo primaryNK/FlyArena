@@ -5,7 +5,7 @@ banc_compatibility "v888/v3"
 identity.name "Ruby"
 identity.uuid "ruby-v065-default"
 identity.author "local"
-identity.lineage "v0.6.7-default"
+identity.lineage "v0.6.8-default"
 cosmetics.body_skin_id 1
 cosmetics.wing_skin_id 1
 cosmetics.sword_skin_id 1

@@ -6,10 +6,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$executable = Join-Path $repoRoot 'bin\FlyArena-v0.6.7.exe'
+$executable = Join-Path $repoRoot 'bin\FlyArena-v0.6.8.exe'
 $license = Join-Path $repoRoot 'LICENSE'
 if (-not (Test-Path -LiteralPath $executable)) {
-    throw 'Build bin\FlyArena-v0.6.7.exe before packaging.'
+    throw 'Build bin\FlyArena-v0.6.8.exe before packaging.'
 }
 if (-not (Test-Path -LiteralPath $license)) {
     throw 'FASL-1.0 LICENSE is missing.'
@@ -47,6 +47,8 @@ Copy-Item -LiteralPath (Join-Path $repoRoot 'data\flies\Ruby.flypack') -Destinat
 Copy-Item -LiteralPath (Join-Path $repoRoot 'data\flies\Azure.flypack') -Destination (Join-Path $stage 'data\flies')
 Copy-Item -LiteralPath (Join-Path $repoRoot 'prepare_banc_latest.bat') -Destination $stage
 Copy-Item -LiteralPath (Join-Path $repoRoot 'prepare_v061_io_map.bat') -Destination $stage
+Copy-Item -LiteralPath (Join-Path $repoRoot 'SETUP_DATA_AND_RUN.bat') -Destination $stage
+Copy-Item -LiteralPath (Join-Path $repoRoot 'START_FLYARENA.bat') -Destination $stage
 $releaseTools = Join-Path $stage 'tools'
 New-Item -ItemType Directory -Path $releaseTools -Force | Out-Null
 $releaseToolNames = @(

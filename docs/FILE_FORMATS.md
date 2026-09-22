@@ -12,7 +12,7 @@ Suggested versioned JSON or ZIP-with-manifest structure.
 
 ### Implemented v1/v2/v3/v4 formats
 
-The v0.6.7 working tree implements small, dependency-free, line-oriented
+The v0.6.8 working tree implements small, dependency-free, line-oriented
 manifests with magic headers:
 
 `FLYARENA_FLYPACK_V1`

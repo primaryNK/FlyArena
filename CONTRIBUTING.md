@@ -5,8 +5,8 @@ reporting bugs, and proposing ideas are welcome. A public modified fork or
 derivative distribution requires prior written permission; see
 `LICENSE_GUIDE_KO.md` and `PERMISSION_REQUESTS.md`.
 
-Build the current experimental application with `build_v067.bat` and run
-`test_v067_profile_learning.bat` before opening a pull request. Lightweight CI
+Build the current experimental application with `build_v068.bat` and run
+`test_v068_profile_learning.bat` before opening a pull request. Lightweight CI
 does not download the full BANC dataset.
 
 Keep neural outputs at the actuator level: forward thrust, turn, sword drive,

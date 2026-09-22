@@ -7,8 +7,8 @@ for /f "usebackq tokens=*" %%i in (`"%VSWHERE%" -latest -products * -requires Mi
 if not defined VSINSTALL ( echo [ERROR] Visual Studio C++ toolchain not found. & exit /b 1 )
 call "%VSINSTALL%\Common7\Tools\VsDevCmd.bat" -arch=x64 >nul
 if errorlevel 1 exit /b 1
-if not exist "%ROOT%obj\v067_tests" mkdir "%ROOT%obj\v067_tests"
-pushd "%ROOT%obj\v067_tests"
+if not exist "%ROOT%obj\v068_tests" mkdir "%ROOT%obj\v068_tests"
+pushd "%ROOT%obj\v068_tests"
 cl /nologo /O2 /std:c++20 /EHsc /DNOMINMAX /W4 ^
   /I"%ROOT%src\arena" /I"%ROOT%src\render" /I"%ROOT%src\learning" /I"%ROOT%src\profile" ^
   "%ROOT%tests\v065_profile_learning_tests.cpp" ^
@@ -16,9 +16,9 @@ cl /nologo /O2 /std:c++20 /EHsc /DNOMINMAX /W4 ^
   "%ROOT%src\arena\equipment_combat.cpp" ^
   "%ROOT%src\profile\fly_profile.cpp" ^
   "%ROOT%src\learning\plastic_readout.cpp" ^
-  /Fe:"%ROOT%obj\v067_tests\FlyArenaV067Tests.exe"
+  /Fe:"%ROOT%obj\v068_tests\FlyArenaV068Tests.exe"
 if errorlevel 1 ( popd & exit /b 1 )
-"%ROOT%obj\v067_tests\FlyArenaV067Tests.exe"
+"%ROOT%obj\v068_tests\FlyArenaV068Tests.exe"
 set "TEST_RESULT=%ERRORLEVEL%"
 popd
 exit /b %TEST_RESULT%

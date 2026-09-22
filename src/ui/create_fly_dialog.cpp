@@ -446,14 +446,17 @@ void paint_preview(DialogState& state, HDC dc) {
     SelectObject(dc, GetStockObject(HOLLOW_BRUSH));
     SelectObject(dc, sword);
     const float sword_angle = -1.22f;
-    const float sword_length = 54.0f * model * std::clamp(
-        equipment.sword.length_scale, 0.60f, 1.80f);
-    const int sword_base_x = cx + static_cast<int>(2.0f * model);
-    const int sword_base_y = cy;
-    const int sword_tip_x = cx + static_cast<int>(
-        std::cos(sword_angle) * sword_length);
-    const int sword_tip_y = cy + static_cast<int>(
-        std::sin(sword_angle) * sword_length);
+    const ArenaConfig preview_arena;
+    const float sword_length =
+        14.5f * model * sword_length_world(equipment)
+        / preview_arena.fly_radius;
+    const int sword_base_x = cx + static_cast<int>(14.5f * 0.30f * model);
+    const int sword_base_y = cy + static_cast<int>(14.5f * 0.45f * model);
+    const float sword_screen_angle = -sword_angle;
+    const int sword_tip_x = sword_base_x + static_cast<int>(
+        std::cos(sword_screen_angle) * sword_length);
+    const int sword_tip_y = sword_base_y + static_cast<int>(
+        std::sin(sword_screen_angle) * sword_length);
     const int sword_mid_x = (sword_base_x + sword_tip_x) / 2;
     const int sword_mid_y = (sword_base_y + sword_tip_y) / 2;
     if (sword_id == 1) {

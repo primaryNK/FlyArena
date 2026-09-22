@@ -39,17 +39,17 @@ data/flies/*.flytrain
 dist/
 
 # Local development history. Keep these files on disk, but publish only the
-# current v0.6.7 source/release surface.
+# current v0.6.8 source/release surface.
 /HOTFIX*.md
 /README_V*.md
 /benchmarks/
 /build_v*.bat
-!/build_v067.bat
+!/build_v068.bat
 /run_v*.bat
-!/run_v067_learning_arena.bat
-!/run_v067_battle_arena.bat
+!/run_v068_learning_arena.bat
+!/run_v068_battle_arena.bat
 /test_v*.bat
-!/test_v067_profile_learning.bat
+!/test_v068_profile_learning.bat
 /reset_v*.bat
 /run_cleanup_*.bat
 /run_latest_*.bat
@@ -81,7 +81,7 @@ dist/
 !/docs/V063_ARCHITECTURE.md
 !/docs/V063_COMBAT_FEEDBACK_CONTRACT.md
 !/docs/V063_RENDERING_CONTRACT.md
-!/docs/V067_ACCELERATION_COMBAT_CUSTOMIZATION.md
+!/docs/V068_RELEASE_DATA_SETUP.md
 
 # Publish only the neutral sample profiles, never local/user fly state.
 /data/flies/*

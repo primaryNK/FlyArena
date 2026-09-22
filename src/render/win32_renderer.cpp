@@ -792,8 +792,11 @@ struct ArenaRenderer::Impl
                 tuning.paused.store(false);
 
             if (saved) {
+                tuning.queue_flypack_load(0, saved_path);
+                tuning.paused.store(false);
+                tuning.restart_revision.fetch_add(1);
                 set_notice(
-                    L"Saved data-only fly: "
+                    L"Saved and queued in LEFT slot for a fresh match: "
                     + utf8_to_wide(saved_path));
             } else if (!error.empty()) {
                 set_notice(L"Create Fly failed: " + utf8_to_wide(error));
@@ -1115,7 +1118,7 @@ struct ArenaRenderer::Impl
             0,
             class_name,
             #ifdef FLYARENA_PRODUCT_UI
-            L"FlyArena v0.6.7 - Full-loop Accelerated Training / Battle",
+            L"FlyArena v0.6.8 - Full-loop Accelerated Training / Battle",
             #else
             L"FlyArena v0.6.4 - Physical Combat Arena",
             #endif
@@ -1572,7 +1575,7 @@ struct ArenaRenderer::Impl
             grid_brush);
 
         // Cosmetic wing silhouettes. All variants use the same canonical
-        // wing_size_scale for rendering and never alter actuator physics.
+        // wing_size_scale that also expands the two gameplay wing capsules.
         for (float side : {-1.0f, 1.0f}) {
             set_local(
                 heading_deg + side * flap * 0.38f,
@@ -1637,12 +1640,26 @@ struct ArenaRenderer::Impl
         // Actual articulated sword pose. Damage is only possible while the
         // simulation reports an active powered swing.
         if (f.visual.show_sword) {
-            const float sword_deg = f.sword_relative_angle * 180.0f / 3.14159265358979323846f;
-            set_local(heading_deg + sword_deg);
-            const float length = 54.0f * sword_length;
+            const float sword_screen_deg =
+                -f.sword_relative_angle * 180.0f / 3.14159265358979323846f;
+            const D2D1_POINT_2F sword_pivot = D2D1::Point2F(
+                14.5f * 0.30f, 14.5f * 0.45f);
+            target->SetTransform(
+                D2D1::Matrix3x2F::Rotation(sword_screen_deg)
+                * D2D1::Matrix3x2F::Translation(
+                    sword_pivot.x, sword_pivot.y)
+                * D2D1::Matrix3x2F::Scale(model_scale, model_scale)
+                * D2D1::Matrix3x2F::Rotation(heading_deg)
+                * D2D1::Matrix3x2F::Translation(center.x, center.y)
+                * canvas);
+            const float length =
+                14.5f
+                * kBaseSwordLengthWorld
+                / std::max(0.001f, f.collision_radius_world)
+                * sword_length;
             if (f.visual.sword_skin_id == 1) {
                 // Ruby sabre: curved presentation around the same base/tip.
-                const D2D1_POINT_2F base = D2D1::Point2F(2.0f, 0.0f);
+                const D2D1_POINT_2F base = D2D1::Point2F(0.0f, 0.0f);
                 const D2D1_POINT_2F middle = D2D1::Point2F(length * 0.56f, -4.5f);
                 const D2D1_POINT_2F tip = D2D1::Point2F(length, 0.0f);
                 target->DrawLine(base, middle, outline_brush, 6.0f * sword_thickness);
@@ -1650,17 +1667,17 @@ struct ArenaRenderer::Impl
                 target->DrawLine(base, middle, sword_skin, 3.2f * sword_thickness);
                 target->DrawLine(middle, tip, sword_skin, 2.5f * sword_thickness);
             } else if (f.visual.sword_skin_id == 3) {
-                target->DrawLine(D2D1::Point2F(2.0f,0.0f),D2D1::Point2F(length,0.0f),outline_brush,8.0f*sword_thickness);
-                target->DrawLine(D2D1::Point2F(2.0f,0.0f),D2D1::Point2F(length,0.0f),sword_skin,4.6f*sword_thickness);
+                target->DrawLine(D2D1::Point2F(0.0f,0.0f),D2D1::Point2F(length,0.0f),outline_brush,8.0f*sword_thickness);
+                target->DrawLine(D2D1::Point2F(0.0f,0.0f),D2D1::Point2F(length,0.0f),sword_skin,4.6f*sword_thickness);
             } else if (f.visual.sword_skin_id == 4) {
-                target->DrawLine(D2D1::Point2F(2.0f,-2.5f),D2D1::Point2F(length,0.0f),sword_skin,2.2f*sword_thickness);
-                target->DrawLine(D2D1::Point2F(2.0f,2.5f),D2D1::Point2F(length,0.0f),sword_skin,2.2f*sword_thickness);
+                target->DrawLine(D2D1::Point2F(0.0f,-2.5f),D2D1::Point2F(length,0.0f),sword_skin,2.2f*sword_thickness);
+                target->DrawLine(D2D1::Point2F(0.0f,2.5f),D2D1::Point2F(length,0.0f),sword_skin,2.2f*sword_thickness);
             } else if (f.visual.sword_skin_id == 5) {
-                target->DrawLine(D2D1::Point2F(2.0f,0.0f),D2D1::Point2F(length,0.0f),sword_skin,2.0f*sword_thickness);
+                target->DrawLine(D2D1::Point2F(0.0f,0.0f),D2D1::Point2F(length,0.0f),sword_skin,2.0f*sword_thickness);
                 target->DrawEllipse(D2D1::Ellipse(D2D1::Point2F(length-5.0f,0.0f),5.0f,5.0f),sword_skin,2.0f);
             } else {
-                target->DrawLine(D2D1::Point2F(2.0f, 0.0f),D2D1::Point2F(length,0.0f),outline_brush,6.0f*sword_thickness);
-                target->DrawLine(D2D1::Point2F(2.0f, 0.0f),D2D1::Point2F(length,0.0f),sword_skin,(f.visual.sword_skin_id == 2 ? 2.2f : 3.2f)*sword_thickness);
+                target->DrawLine(D2D1::Point2F(0.0f, 0.0f),D2D1::Point2F(length,0.0f),outline_brush,6.0f*sword_thickness);
+                target->DrawLine(D2D1::Point2F(0.0f, 0.0f),D2D1::Point2F(length,0.0f),sword_skin,(f.visual.sword_skin_id == 2 ? 2.2f : 3.2f)*sword_thickness);
                 if (f.visual.sword_skin_id == 2) {
                     // Azure spear-tip ornament; canonical collision reach ends
                     // at the same `length` coordinate.
@@ -1668,12 +1685,12 @@ struct ArenaRenderer::Impl
                     target->DrawLine(D2D1::Point2F(length,0.0f),D2D1::Point2F(length-9.0f,5.0f),sword_skin,2.2f);
                 }
             }
-            target->DrawLine(D2D1::Point2F(5.0f,-8.0f),D2D1::Point2F(5.0f,8.0f),amber_brush,4.0f);
+            target->DrawLine(D2D1::Point2F(3.0f,-8.0f),D2D1::Point2F(3.0f,8.0f),amber_brush,4.0f);
         }
 
         if (f.visual.show_shield) {
             const float shield_deg = f.shield_relative_angle * 180.0f / 3.14159265358979323846f;
-            set_local(heading_deg + shield_deg);
+            set_local(heading_deg - shield_deg);
             const float shield_offset =
                 14.5f
                 * std::max(

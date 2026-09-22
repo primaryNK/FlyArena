@@ -7,6 +7,15 @@ constexpr float kPi=3.14159265358979323846f;
 float len(Vec2 v){return std::sqrt(v.x*v.x+v.y*v.y);} float dot(Vec2 a,Vec2 b){return a.x*b.x+a.y*b.y;} float cross(Vec2 a,Vec2 b){return a.x*b.y-a.y*b.x;}
 Vec2 add(Vec2 a,Vec2 b){return {a.x+b.x,a.y+b.y};} Vec2 sub(Vec2 a,Vec2 b){return {a.x-b.x,a.y-b.y};} Vec2 mul(Vec2 a,float s){return {a.x*s,a.y*s};} Vec2 dir(float a){return {std::cos(a),std::sin(a)};} Vec2 perp(Vec2 v){return {-v.y,v.x};}
 struct Closest{Vec2 p{};float t=0,d=0;}; Closest closest(Vec2 a,Vec2 b,Vec2 p){Vec2 ab=sub(b,a);float den=std::max(1e-8f,dot(ab,ab));float t=std::clamp(dot(sub(p,a),ab)/den,0.0f,1.0f);Vec2 q=add(a,mul(ab,t));return {q,t,len(sub(p,q))};}
+struct SegmentPair{Vec2 sword{},target{};float d=0;};
+SegmentPair closest_segments(Vec2 p1,Vec2 q1,Vec2 p2,Vec2 q2){
+ Vec2 d1=sub(q1,p1),d2=sub(q2,p2),r=sub(p1,p2);
+ float a=dot(d1,d1),e=dot(d2,d2),f=dot(d2,r),s=0,t=0;
+ if(a<=1e-8f&&e<=1e-8f)return {p1,p2,len(sub(p1,p2))};
+ if(a<=1e-8f){t=std::clamp(f/e,0.0f,1.0f);}
+ else {float c=dot(d1,r);if(e<=1e-8f)s=std::clamp(-c/a,0.0f,1.0f);else{float b=dot(d1,d2),den=a*e-b*b;if(den!=0)s=std::clamp((b*f-c*e)/den,0.0f,1.0f);t=(b*s+f)/e;if(t<0){t=0;s=std::clamp(-c/a,0.0f,1.0f);}else if(t>1){t=1;s=std::clamp((b-c)/a,0.0f,1.0f);}}}
+ Vec2 ps=add(p1,mul(d1,s)),pt=add(p2,mul(d2,t));return {ps,pt,len(sub(ps,pt))};
+}
 struct G{Vec2 pivot,tip,sdir,tipv,shield,shieldv;float sr=0;};
 G geom_at_sword_angle(const FlyBodyState& b,float br,float sword_relative_angle){
  G g;Vec2 f=dir(b.heading_rad),right=dir(b.heading_rad-kPi*.5f);
@@ -42,6 +51,33 @@ SweepContact swept_sword_circle(
    G candidate=geom_at_sword_angle(b,br,angle);
    Closest contact=closest(candidate.pivot,candidate.tip,center);
    if(contact.d<best.closest.d){best.closest=contact;best.geometry=candidate;}
+ }
+ return best;
+}
+struct WingCapsule{Vec2 root{},tip{};float radius=0;};
+WingCapsule wing_capsule(const FlyBodyState& b,float br,float side){
+ const float scale=wing_size_scale(b.equipment);
+ const Vec2 forward=dir(b.heading_rad),right=dir(b.heading_rad-kPi*.5f);
+ auto point=[&](float longitudinal,float lateral){return add(b.position,add(mul(forward,longitudinal*br*scale),mul(right,lateral*side*br*scale)));};
+ return {point(kWingHitRootForwardBodyRadii,kWingHitRootLateralBodyRadii),point(kWingHitTipForwardBodyRadii,kWingHitTipLateralBodyRadii),kWingHitRadiusBodyRadii*br*scale};
+}
+struct TargetContact{Vec2 sword_point{},target_point{};G geometry{};float surface_distance=std::numeric_limits<float>::max();};
+TargetContact swept_sword_fly(const FlyBodyState& a,const FlyBodyState& d,float br){
+ const float delta=wrap_angle(a.sword_relative_angle-a.sword_previous_relative_angle);
+ const int samples=std::clamp(static_cast<int>(std::ceil(std::fabs(delta)/0.035f))+1,2,24);
+ const WingCapsule wings[2]={wing_capsule(d,br,-1.0f),wing_capsule(d,br,1.0f)};
+ TargetContact best;
+ for(int i=0;i<samples;++i){
+   const float t=samples>1?static_cast<float>(i)/static_cast<float>(samples-1):1.0f;
+   G candidate=geom_at_sword_angle(a,br,a.sword_previous_relative_angle+delta*t);
+   const Closest body=closest(candidate.pivot,candidate.tip,d.position);
+   const float body_surface=body.d-br;
+   if(body_surface<best.surface_distance){best={body.p,d.position,candidate,body_surface};}
+   for(const WingCapsule& wing:wings){
+     const SegmentPair pair=closest_segments(candidate.pivot,candidate.tip,wing.root,wing.tip);
+     const float wing_surface=pair.d-wing.radius;
+     if(wing_surface<best.surface_distance){best={pair.sword,pair.target,candidate,wing_surface};}
+   }
  }
  return best;
 }
@@ -396,10 +432,14 @@ void resolve_equipment_combat(FlyBodyState& a,FlyBodyState& d,float br,const Com
      return;
    }
  }
- const SweepContact body_sweep=swept_sword_circle(a,br,d.position);
- ag=body_sweep.geometry;
- Closest bc=body_sweep.closest;Vec2 rv=sub(ag.tipv,d.velocity);float rs=len(rv);
- if(bc.d<=br && rs>=cfg.hit_speed_threshold){
+ const TargetContact target=swept_sword_fly(a,d,br);
+ ag=target.geometry;
+ const Vec2 sword_arm=sub(target.sword_point,a.position);
+ const Vec2 target_arm=sub(target.target_point,d.position);
+ const Vec2 sword_velocity=add(a.velocity,mul(perp(sword_arm),a.angular_velocity+a.sword_angular_velocity));
+ const Vec2 target_velocity=add(d.velocity,mul(perp(target_arm),d.angular_velocity));
+ Vec2 rv=sub(sword_velocity,target_velocity);float rs=len(rv);
+ if(target.surface_distance<=0.0f && rs>=cfg.hit_speed_threshold){
    const float score=rs;
    const int dmg=cfg.sword_hit_damage;
    d.hp=std::max(0,d.hp-dmg);
@@ -410,11 +450,11 @@ void resolve_equipment_combat(FlyBodyState& a,FlyBodyState& d,float br,const Com
    a.sword_recovery_start_angle=a.sword_relative_angle;
    Vec2 idir=rs>1e-5f?mul(rv,1.0f/rs):ag.sdir;
    d.velocity=add(d.velocity,mul(idir,cfg.hit_impulse_scale*score));
-   evt(out,CombatEventType::Hit,a,d,bc.p,ms,id,dmg,0,
+   evt(out,CombatEventType::Hit,a,d,target.sword_point,ms,id,dmg,0,
        std::clamp(score/1.5f,0.0f,1.0f),
        cross(ag.sdir,rv)>=0?1.0f:-1.0f);
    return;
  }
- if(d.dodge_cooldown_s<=0 && bc.d<=br+cfg.dodge_margin_world && bc.d>br && rs>=cfg.hit_speed_threshold){Vec2 rbv=sub(d.velocity,a.velocity);float lat=std::fabs(cross(rbv,ag.sdir));if(lat>=cfg.dodge_lateral_speed_threshold){d.dodges++;d.dodge_cooldown_s=cfg.dodge_cooldown_s;a.weapon_contact_cooldown_s=.06f;float di=cross(ag.sdir,sub(d.position,bc.p))>=0?1.0f:-1.0f;evt(out,CombatEventType::Dodge,d,a,bc.p,ms,id,0,0,std::clamp(lat,0.0f,1.0f),di);}}
+ if(d.dodge_cooldown_s<=0 && target.surface_distance<=cfg.dodge_margin_world && target.surface_distance>0.0f && rs>=cfg.hit_speed_threshold){Vec2 rbv=sub(d.velocity,a.velocity);float lat=std::fabs(cross(rbv,ag.sdir));if(lat>=cfg.dodge_lateral_speed_threshold){d.dodges++;d.dodge_cooldown_s=cfg.dodge_cooldown_s;a.weapon_contact_cooldown_s=.06f;float di=cross(ag.sdir,sub(target.target_point,target.sword_point))>=0?1.0f:-1.0f;evt(out,CombatEventType::Dodge,d,a,target.sword_point,ms,id,0,0,std::clamp(lat,0.0f,1.0f),di);}}
 }
 } // namespace flyarena

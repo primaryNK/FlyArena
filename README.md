@@ -7,8 +7,8 @@ FlyArena는 BANC v888/v3 초파리 연결망으로 두 개의 독립적인 신�
 정합니다.
 
 The last user-validated stable combat baseline is **v0.6.4d**. The current
-experimental build is **v0.6.7**: full-loop speed control, compute-limited MAX
-learning, swept sword collision, opposing spawns, and Flypack v4 customization.
+experimental build is **v0.6.8**: one-click Release data setup, full-loop speed control, compute-limited MAX
+learning, canonical sword reach, body/wing hitboxes, opposing spawns, and Flypack v4 customization.
 
 ## Current architecture
 
@@ -27,22 +27,23 @@ connectivity pairs and does not add scripted actions such as `attack()` or
 ## Build and verify
 
 ```bat
-build_v067.bat
-test_v067_profile_learning.bat
+build_v068.bat
+test_v068_profile_learning.bat
 ```
 
 The portable tests cover flypack validation/round-trip, learning continuation
 and freeze, equipment derivation, active-swing HIT, BLOCK/PARRY, unconditional
 wall damage, stamina use, and 60-second HP-result rules.
 
-The public tree keeps only the current v0.6.7 build/test entry points.
+The public tree keeps only the current v0.6.8 build/test entry points.
 
 ## 처음 사용하는 분
 
-1. GitHub Releases에서 `FlyArena-v0.6.7-Windows-x64.zip`을 받습니다.
-2. 압축을 풀고 동봉된 데이터 준비 배치를 실행합니다. BANC 원자료는
-   크기와 별도 라이선스 때문에 ZIP에 포함되지 않습니다.
-3. `FlyArena.exe`를 실행합니다.
+1. GitHub Releases에서 `FlyArena-v0.6.8-Windows-x64.zip`을 받습니다.
+2. 압축을 풀고 `SETUP_DATA_AND_RUN.bat`를 실행합니다. BANC 원자료는
+   크기와 별도 라이선스 때문에 ZIP에 포함되지 않으며, 이 배치가 최초 한 번
+   다운로드·변환·IO 맵 생성을 마친 뒤 FlyArena를 실행합니다.
+3. 다음 실행부터는 `START_FLYARENA.bat`를 사용합니다.
 4. `CREATE FLY`에서 초파리를 만들고 `TRAINING`으로 학습한 뒤 `BATTLE`로
    학습이 고정된 상태를 확인합니다.
 
@@ -51,8 +52,8 @@ The public tree keeps only the current v0.6.7 build/test entry points.
 
 ## Run
 
-- `run_v067_learning_arena.bat` — build and start in Training
-- `run_v067_battle_arena.bat` — build and start in frozen Battle
+- `run_v068_learning_arena.bat` — build and start in Training
+- `run_v068_battle_arena.bat` — build and start in frozen Battle
 
 The renderer provides:
 
@@ -87,7 +88,7 @@ Fly packages are data-only. Imported packages cannot load DLLs, scripts,
 shaders, or arbitrary filesystem paths.
 
 관심 있는 개발자와 연구자는 [문서 안내](docs/README.md)에서 현재 구조와
-가정을 확인할 수 있습니다. 공개 Git과 소스 ZIP에는 현재 v0.6.7에 필요한
+가정을 확인할 수 있습니다. 공개 Git과 소스 ZIP에는 현재 v0.6.8에 필요한
 최종 파일만 들어가며, 개발 과정의 옛 빌드·실험 파일은 포함하지 않습니다.
 
 ## Data and scientific scope

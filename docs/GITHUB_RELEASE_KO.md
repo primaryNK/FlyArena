@@ -9,13 +9,13 @@
 ```powershell
 git status --short --untracked-files=all
 git ls-files --others --exclude-standard
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\stage_public_source.ps1 -Version v0.6.7
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\stage_public_source.ps1 -Version v0.6.8
 ```
 
 - `LICENSE`의 `FlyArena Project Owner`를 실제 권리자 이름/조직명으로 변경
 - `PUBLIC_SOURCE_MANIFEST.txt`와 Git 공개 파일이 일치하는지 확인
 - BANC 원자료, 캐시, `.flytrain`, `results`, 비밀번호나 토큰이 없는지 확인
-- `build_v067.bat`과 `test_v067_profile_learning.bat`이 통과하는지 확인
+- `build_v068.bat`과 `test_v068_profile_learning.bat`이 통과하는지 확인
 
 ## 2. 첫 로컬 커밋
 
@@ -26,7 +26,7 @@ git config user.name "YOUR NAME"
 git config user.email "YOUR_GITHUB_EMAIL"
 git add --all
 git status --short
-git commit -m "Release FlyArena v0.6.7"
+git commit -m "Release FlyArena v0.6.8"
 ```
 
 `git add --all`은 `.gitignore`를 따르지만, 커밋 전 `git status`에서 최종
@@ -53,20 +53,20 @@ git remote -v
 git push -u origin main
 ```
 
-## 4. v0.6.7 자동 Release 만들기
+## 4. v0.6.8 자동 Release 만들기
 
 `main`의 CI가 성공한 것을 확인한 뒤 서명 설명 태그를 push합니다.
 
 ```powershell
-git tag -a v0.6.7 -m "FlyArena v0.6.7"
-git push origin v0.6.7
+git tag -a v0.6.8 -m "FlyArena v0.6.8"
+git push origin v0.6.8
 ```
 
 `.github/workflows/release.yml`이 Windows에서 다시 빌드·테스트하고 다음을
 GitHub Release에 첨부합니다.
 
-- `FlyArena-v0.6.7-Windows-x64.zip`
-- `FlyArena-v0.6.7-Source.zip`
+- `FlyArena-v0.6.8-Windows-x64.zip`
+- `FlyArena-v0.6.8-Source.zip`
 - `SHA256SUMS.txt`
 
 GitHub 저장소의 **Actions** 탭에서 `Tagged Windows Release`가 성공했는지
@@ -79,10 +79,10 @@ GitHub 저장소의 **Actions** 탭에서 `Tagged Windows Release`가 성공했�
 워크플로가 아닌 로컬에서 ZIP을 만들 수 있습니다.
 
 ```powershell
-.\build_v067.bat
-.\test_v067_profile_learning.bat
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\package_release.ps1 -Version v0.6.7
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\stage_public_source.ps1 -Version v0.6.7
+.\build_v068.bat
+.\test_v068_profile_learning.bat
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\package_release.ps1 -Version v0.6.8
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\stage_public_source.ps1 -Version v0.6.8
 ```
 
 생성된 `dist`의 ZIP 두 개와 `SHA256SUMS.txt`를 GitHub Release에 첨부합니다.

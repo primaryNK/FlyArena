@@ -5,7 +5,7 @@ banc_compatibility "v888/v3"
 identity.name "Azure"
 identity.uuid "azure-v065-default"
 identity.author "local"
-identity.lineage "v0.6.7-default"
+identity.lineage "v0.6.8-default"
 cosmetics.body_skin_id 2
 cosmetics.wing_skin_id 2
 cosmetics.sword_skin_id 2

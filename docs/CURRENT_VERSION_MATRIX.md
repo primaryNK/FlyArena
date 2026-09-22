@@ -1,11 +1,12 @@
 # Current Version Matrix
 
-## v0.6.7 experimental working tree
+## v0.6.8 experimental working tree
 
 Build/test validated on Windows on 2026-09-22:
 
-- `build_v067.bat` produces `bin/FlyArena-v0.6.7.exe`
-- `test_v067_profile_learning.bat` passes
+- `build_v068.bat` produces `bin/FlyArena-v0.6.8.exe`
+- `test_v068_profile_learning.bat` passes
+- portable Release includes one-click BANC topology/IO setup and a validated launcher
 - BANC/GPU/calibration state remains resident across repeated rounds
 - Training 1x–16x pace the complete world loop; `MAX` removes wall-clock
   pacing, uses a 4 FPS frozen-spawn status view, and decimates visual/CSV work
@@ -13,6 +14,10 @@ Build/test validated on Windows on 2026-09-22:
 - RED/BLUE spawn on opposite sides facing inward
 - powered sword collision samples the complete swept Swing arc, including the
   final Swing-to-Recovery substep
+- rendered sword pivot, rotation, and length match canonical collision geometry;
+  direct tests prove longer swords gain physical reach
+- body and size-scaled left/right wing capsules are damageable hitboxes
+- Create Fly saves are immediately queued into the LEFT slot for a fresh match
 - Create Fly exposes the linked sword, wings, and shield trade-offs
 - `.flypack` v4 stores separate two-color gradients for body/wings/sword/shield
   and built-in skin IDs 0..5; v1/v2/v3 remain readable

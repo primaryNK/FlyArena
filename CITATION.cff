@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use FlyArena, cite this software and cite the BANC paper/data separately."
 title: "FlyArena"
 type: software
-version: 0.6.7
+version: 0.6.8
 date-released: 2026-09-22
 authors:
   - name: "FlyArena contributors"
