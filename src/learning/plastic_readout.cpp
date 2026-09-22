@@ -13,8 +13,10 @@ namespace flyarena {
 
 namespace {
 
-constexpr const char* kMagic =
+constexpr const char* kMagicV1 =
     "FLYARENA_PLASTIC_READOUT_V1";
+constexpr const char* kMagicV2 =
+    "FLYARENA_PLASTIC_READOUT_V2";
 
 float dot(
     const std::array<float, kPlasticFeatureCount>& w,
@@ -183,12 +185,18 @@ void PlasticReadout::reset_eligibility()
         action.fill(0.0f);
 }
 
+void PlasticReadout::complete_training_episode()
+{
+    ++completed_training_episodes_;
+}
+
 void PlasticReadout::reset_learning()
 {
     for (auto& action : weights_)
         action.fill(0.0f);
     reset_eligibility();
     training_steps_ = 0;
+    completed_training_episodes_ = 0;
     cumulative_reward_ = 0.0;
     reward_baseline_ = 0.0f;
     last_action_was_learning_ = false;
@@ -214,6 +222,7 @@ PlasticReadout::diagnostics() const
 {
     PlasticReadoutDiagnostics d;
     d.training_steps = training_steps_;
+    d.completed_training_episodes = completed_training_episodes_;
     d.cumulative_reward = cumulative_reward_;
     d.reward_baseline = reward_baseline_;
     d.weight_l2 = l2(weights_);
@@ -240,10 +249,12 @@ bool PlasticReadout::save(
         }
 
         out
-            << kMagic << '\n'
+            << kMagicV2 << '\n'
             << "fly_name " << fly_name << '\n'
             << "training_steps "
             << training_steps_ << '\n'
+            << "completed_training_episodes "
+            << completed_training_episodes_ << '\n'
             << "cumulative_reward "
             << std::setprecision(17)
             << cumulative_reward_ << '\n'
@@ -293,7 +304,7 @@ bool PlasticReadout::load(
 
     std::string line;
     if (!std::getline(in, line)
-        || line != kMagic)
+        || (line != kMagicV1 && line != kMagicV2))
     {
         error =
             "Unsupported or damaged training checkpoint: "
@@ -301,6 +312,7 @@ bool PlasticReadout::load(
         return false;
     }
 
+    const bool format_v2 = line == kMagicV2;
     std::string key;
 
     std::getline(in, line); // fly_name metadata
@@ -310,6 +322,17 @@ bool PlasticReadout::load(
     {
         error = "Missing training_steps in " + path;
         return false;
+    }
+
+    if (format_v2) {
+        if (!(in >> key >> completed_training_episodes_)
+            || key != "completed_training_episodes")
+        {
+            error = "Missing completed_training_episodes in " + path;
+            return false;
+        }
+    } else {
+        completed_training_episodes_ = 0;
     }
 
     if (!(in >> key >> cumulative_reward_)

@@ -24,6 +24,7 @@ enum class ArenaPhase : uint32_t {
 struct FlyRenderState {
     std::string name;
     FlyVisualLoadout visual;
+    uint64_t completed_training_episodes = 0;
 
     Vec2 position{};
     float heading_rad = 0.0f;

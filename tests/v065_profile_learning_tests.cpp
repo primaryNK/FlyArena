@@ -177,7 +177,10 @@ void test_learning_freeze(const fs::path& directory) {
     policy.learn(10.0f);
     const PlasticReadoutDiagnostics learned = policy.diagnostics();
     require(learned.training_steps == 1, "learning step was not recorded");
+    require(learned.completed_training_episodes == 0,
+        "fresh policy started with completed Training matches");
     require(learned.weight_l2 > 0.0f, "positive reward did not change weights");
+    policy.complete_training_episode();
 
     std::string error;
     const fs::path before_path = directory / "before.flytrain";
@@ -196,12 +199,41 @@ void test_learning_freeze(const fs::path& directory) {
     PlasticReadout restored(7);
     require(restored.load(before_path.string(), error), error.c_str());
     require(restored.diagnostics().training_steps == learned.training_steps, "checkpoint training steps did not load");
+    require(restored.diagnostics().completed_training_episodes == 1,
+        "completed Training match count did not load");
     require(std::fabs(restored.diagnostics().weight_l2 - learned.weight_l2) < 1e-6f, "checkpoint weights did not load");
 
     restored.reset_learning();
     require(restored.diagnostics().training_steps == 0, "learning reset kept training steps");
+    require(restored.diagnostics().completed_training_episodes == 0,
+        "learning reset kept completed Training matches");
     require(restored.diagnostics().weight_l2 == 0.0f, "learning reset kept weights");
     require(restored.diagnostics().cumulative_reward == 0.0, "learning reset kept reward history");
+
+    const fs::path legacy_path = directory / "legacy-v1.flytrain";
+    {
+        std::ofstream legacy(legacy_path);
+        legacy
+            << "FLYARENA_PLASTIC_READOUT_V1\n"
+            << "fly_name Legacy\n"
+            << "training_steps 9\n"
+            << "cumulative_reward 0\n"
+            << "reward_baseline 0\n"
+            << "feature_count " << kPlasticFeatureCount << "\n"
+            << "action_count " << kPlasticActionCount << "\n"
+            << "weights\n";
+        for (size_t action = 0; action < kPlasticActionCount; ++action) {
+            for (size_t feature = 0; feature < kPlasticFeatureCount; ++feature)
+                legacy << (feature ? " 0" : "0");
+            legacy << '\n';
+        }
+    }
+    PlasticReadout legacy_restored(8);
+    require(legacy_restored.load(legacy_path.string(), error), error.c_str());
+    require(legacy_restored.diagnostics().training_steps == 9,
+        "legacy v1 training steps did not load");
+    require(legacy_restored.diagnostics().completed_training_episodes == 0,
+        "legacy v1 invented completed Training matches");
 }
 
 void test_training_slot_commands() {

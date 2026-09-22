@@ -31,6 +31,7 @@ struct PlasticReadoutConfig {
 
 struct PlasticReadoutDiagnostics {
     uint64_t training_steps = 0;
+    uint64_t completed_training_episodes = 0;
     double cumulative_reward = 0.0;
     float reward_baseline = 0.0f;
     float weight_l2 = 0.0f;
@@ -55,6 +56,10 @@ public:
     void learn(float reward);
 
     void reset_eligibility();
+
+    // Count one physically completed Training match. Cancelled/restarted
+    // matches and frozen Battle matches do not call this.
+    void complete_training_episode();
 
     // Explicit user-requested learning reset. This clears only the plastic
     // readout state; BANC topology and neural state remain untouched.
@@ -94,6 +99,7 @@ private:
     std::normal_distribution<float> normal_{0.0f, 1.0f};
 
     uint64_t training_steps_ = 0;
+    uint64_t completed_training_episodes_ = 0;
     double cumulative_reward_ = 0.0;
     float reward_baseline_ = 0.0f;
     bool last_action_was_learning_ = false;

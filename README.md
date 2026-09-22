@@ -166,6 +166,9 @@ The renderer provides:
   the active checkpoint for that slot
 * `RESET THIS FLY LEARNING` — Training-only, confirmed reset of the displayed
   checkpoint
+* each HUD shows `TRAINED N`, the completed Training-match count stored in the
+  active `.flytrain`; cancelled matches and frozen Battle do not increment it
+* `SOUND`, `VOL -`, and `VOL +` — in-game mute and volume control in 10% steps
 
 The first run loads and calibrates the CNS once. Repeated rounds reuse the same
 resident topology, GPU resources, envelope, and evolving neural state. 1x–16x

@@ -118,6 +118,8 @@ struct RuntimeTuning {
     std::atomic<uint64_t> episode_number{0};
     std::atomic<uint32_t> training_speed_option{0};
     std::atomic<float> measured_simulation_multiplier{0.0f};
+    std::atomic<uint32_t> audio_volume_percent{100};
+    std::atomic<bool> audio_muted{false};
 
     std::atomic<bool> paused{false};
     std::atomic<bool> quit_requested{false};
@@ -292,7 +294,8 @@ struct RuntimeTuning {
         trainer_generation_ = generation;
         trainer_checkpoint_path_ = checkpoint_path;
         training_slots_[1].checkpoint_path = checkpoint_path;
-        training_slots_[1].status = "Fresh randomized Trainer · 0 steps";
+        training_slots_[1].status =
+            "Fresh randomized Trainer · 0 steps · 0 matches";
     }
 
     bool pop_training_command(TrainingCommand& command) {

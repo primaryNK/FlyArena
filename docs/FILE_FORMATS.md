@@ -103,7 +103,9 @@ If ZIP is used in a future format, only load a strict whitelist of data files.
 
 Purpose: learned state/checkpoint.
 
-Current v0.6.5 experimental checkpoint stores the plastic readout weights and training metadata.
+FlyArena writes `.flytrain` v2 with plastic-readout weights, training steps,
+and the number of physically completed Training matches. Existing v1 files
+remain readable and begin with zero completed-match history.
 
 Going forward, version it explicitly and include:
 
@@ -116,6 +118,7 @@ banc_version
 io_map_version
 fly_uuid
 training_steps
+completed_training_episodes
 cumulative_reward
 weights
 optimizer/eligibility state if needed

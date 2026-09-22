@@ -1645,7 +1645,7 @@ int simulation_thread_main(
         }
         tuning.complete_training_command(
             training_command.slot, true,
-            reset_path, "Learning reset · 0 steps");
+            reset_path, "Learning reset · 0 steps · 0 matches");
     }
 
     FlyProfile red_profile;
@@ -1845,7 +1845,7 @@ int simulation_thread_main(
     NeuralReadout zero_neural{};
     ArenaControlFrame zero_control{};
 
-    snapshots.publish(
+    auto initial_snapshot =
         make_snapshot(
             sequence++,
             0.0,
@@ -1858,7 +1858,12 @@ int simulation_thread_main(
             zero_control, zero_control,
             arena.fly_radius,
             cli.duration_ms,
-            0.0));
+            0.0);
+    initial_snapshot.red.completed_training_episodes =
+        red_policy.diagnostics().completed_training_episodes;
+    initial_snapshot.blue.completed_training_episodes =
+        blue_policy.diagnostics().completed_training_episodes;
+    snapshots.publish(initial_snapshot);
 
     fs::create_directories("results");
 
@@ -2346,6 +2351,10 @@ int simulation_thread_main(
 
         snap.red.key_neuron_activity = red_key_activity;
         snap.blue.key_neuron_activity = blue_key_activity;
+        snap.red.completed_training_episodes =
+            red_policy.diagnostics().completed_training_episodes;
+        snap.blue.completed_training_episodes =
+            blue_policy.diagnostics().completed_training_episodes;
         snap.headless_max_training = max_speed_tick;
         snap.combat_event_count = static_cast<uint32_t>(std::min<size_t>(snap.combat_events.size(), tick_combat_events.size()));
         if(snap.combat_event_count>0){size_t start=tick_combat_events.size()-snap.combat_event_count;for(uint32_t i=0;i<snap.combat_event_count;++i)snap.combat_events[i]=tick_combat_events[start+i];}
@@ -2503,6 +2512,13 @@ int simulation_thread_main(
             classify_match_result(red.hp, blue.hp));
     }
 
+    if (match_result != 0) {
+        if (red_learning_enabled)
+            red_policy.complete_training_episode();
+        if (blue_learning_enabled)
+            blue_policy.complete_training_episode();
+    }
+
     const auto final_sample =
         snapshots.sample();
 
@@ -2516,6 +2532,10 @@ int simulation_thread_main(
     done.match_duration_ms = cli.duration_ms;
     done.match_result = match_result;
     done.result_reason = result_reason;
+    done.red.completed_training_episodes =
+        red_policy.diagnostics().completed_training_episodes;
+    done.blue.completed_training_episodes =
+        blue_policy.diagnostics().completed_training_episodes;
 
     if (match_result == 1)
         done.status = cli.red_name + " WINS!";
@@ -2789,6 +2809,10 @@ int simulation_thread_main(
         << red_policy.diagnostics().training_steps << "\n"
         << "blue_training_steps="
         << blue_policy.diagnostics().training_steps << "\n"
+        << "red_completed_training_episodes="
+        << red_policy.diagnostics().completed_training_episodes << "\n"
+        << "blue_completed_training_episodes="
+        << blue_policy.diagnostics().completed_training_episodes << "\n"
         << "red_cumulative_learning_reward="
         << red_policy.diagnostics().cumulative_reward << "\n"
         << "blue_cumulative_learning_reward="

@@ -23,6 +23,9 @@ Build/test validated on Windows on 2026-09-22:
 - Create Fly exposes the linked sword, wings, and shield trade-offs
 - `.flypack` v4 stores separate two-color gradients for body/wings/sword/shield
   and built-in skin IDs 0..5; v1/v2/v3 remain readable
+- `.flytrain` v2 stores completed Training-match count; v1 remains readable,
+  and both side HUDs show the active fly's `TRAINED N` count
+- in-game SOUND, VOL -, and VOL + controls adjust generated combat audio
 - repository-local Git, Windows CI, source-only tag release packaging,
   checksums, citation, FASL-1.0 notices, clean-source staging, and issue
   templates are prepared

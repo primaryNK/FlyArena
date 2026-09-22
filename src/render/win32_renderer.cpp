@@ -127,7 +127,10 @@ void append_u32(std::vector<uint8_t>& out, uint32_t value) {
     append_u16(out, static_cast<uint16_t>((value >> 16) & 0xffffu));
 }
 
-std::vector<uint8_t> make_sound_effect(SoundEffect effect) {
+std::vector<uint8_t> make_sound_effect(
+    SoundEffect effect,
+    float volume_scale)
+{
     constexpr uint32_t sample_rate = 22050;
     const float duration = effect == SoundEffect::Wall ? 0.48f : 0.20f;
     const uint32_t samples = static_cast<uint32_t>(sample_rate * duration);
@@ -169,7 +172,10 @@ std::vector<uint8_t> make_sound_effect(SoundEffect effect) {
             break;
         }
         pcm[i] = static_cast<int16_t>(
-            std::clamp(sample * 14500.0f, -32767.0f, 32767.0f));
+            std::clamp(
+                sample * 14500.0f * clamp01(volume_scale),
+                -32767.0f,
+                32767.0f));
     }
 
     std::vector<uint8_t> wav;
@@ -276,8 +282,10 @@ struct ArenaRenderer::Impl
     uint64_t last_combat_event_id = 0;
     uint64_t last_wall_sound_sequence = 0;
     std::chrono::steady_clock::time_point last_wall_sound_at{};
-    std::array<std::vector<uint8_t>,
-        static_cast<size_t>(SoundEffect::Count)> sound_effects{};
+    std::array<
+        std::array<std::vector<uint8_t>,
+            static_cast<size_t>(SoundEffect::Count)>,
+        11> sound_effects{};
     bool show_debug = false;
     std::wstring ui_notice;
     std::chrono::steady_clock::time_point ui_notice_started{};
@@ -305,9 +313,15 @@ struct ArenaRenderer::Impl
         const RendererConfig& c)
         : snapshots(s), tuning(t), config(c)
     {
-        for (size_t i = 0; i < sound_effects.size(); ++i) {
-            sound_effects[i] = make_sound_effect(
-                static_cast<SoundEffect>(i));
+        for (size_t level = 0; level < sound_effects.size(); ++level) {
+            for (size_t effect = 0;
+                 effect < sound_effects[level].size();
+                 ++effect)
+            {
+                sound_effects[level][effect] = make_sound_effect(
+                    static_cast<SoundEffect>(effect),
+                    static_cast<float>(level) / 10.0f);
+            }
         }
     }
 
@@ -777,6 +791,12 @@ struct ArenaRenderer::Impl
             D2D1::RectF(728.0f, 674.0f, 816.0f, 704.0f);
         const D2D1_RECT_F reward_rect =
             D2D1::RectF(826.0f, 674.0f, 956.0f, 704.0f);
+        const D2D1_RECT_F sound_rect =
+            D2D1::RectF(966.0f, 674.0f, 1036.0f, 704.0f);
+        const D2D1_RECT_F volume_down_rect =
+            D2D1::RectF(1046.0f, 674.0f, 1110.0f, 704.0f);
+        const D2D1_RECT_F volume_up_rect =
+            D2D1::RectF(1188.0f, 674.0f, 1252.0f, 704.0f);
         const D2D1_RECT_F red_learning_reset_rect =
             D2D1::RectF(36.0f, 613.0f, 248.0f, 640.0f);
         const D2D1_RECT_F blue_learning_reset_rect =
@@ -920,6 +940,30 @@ struct ArenaRenderer::Impl
             set_notice(L"Current match cancelled · starting a fresh match");
             return;
         }
+        if (point_in(point, sound_rect)) {
+            const bool muted = !tuning.audio_muted.load();
+            tuning.audio_muted.store(muted);
+            if (muted)
+                PlaySoundA(nullptr, nullptr, 0);
+            set_notice(muted ? L"SOUND MUTED" : L"SOUND ON");
+            return;
+        }
+        if (point_in(point, volume_down_rect)) {
+            const uint32_t current = tuning.audio_volume_percent.load();
+            const uint32_t volume = current >= 10 ? current - 10 : 0;
+            tuning.audio_volume_percent.store(volume);
+            tuning.audio_muted.store(volume == 0);
+            set_notice(L"VOLUME " + std::to_wstring(volume) + L"%");
+            return;
+        }
+        if (point_in(point, volume_up_rect)) {
+            const uint32_t current = tuning.audio_volume_percent.load();
+            const uint32_t volume = std::min<uint32_t>(100, current + 10);
+            tuning.audio_volume_percent.store(volume);
+            tuning.audio_muted.store(false);
+            set_notice(L"VOLUME " + std::to_wstring(volume) + L"%");
+            return;
+        }
         if (point_in(point, reward_rect)) {
             if (tuning.app_mode.load() != AppMode::Training) {
                 set_notice(L"Reward tuning is available in Training only");
@@ -1059,7 +1103,13 @@ struct ArenaRenderer::Impl
     }
 
     void play_sound(SoundEffect effect) {
-        const auto& wav = sound_effects[static_cast<size_t>(effect)];
+        if (tuning.audio_muted.load())
+            return;
+        const uint32_t volume = std::min<uint32_t>(
+            100, tuning.audio_volume_percent.load());
+        const size_t level = static_cast<size_t>((volume + 5) / 10);
+        const auto& wav =
+            sound_effects[level][static_cast<size_t>(effect)];
         if (!wav.empty()) {
             PlaySoundA(
                 reinterpret_cast<LPCSTR>(wav.data()), nullptr,
@@ -1908,17 +1958,19 @@ struct ArenaRenderer::Impl
         const bool random_trainer = training
             && tuning.training_submode.load()
                == TrainingSubmode::RandomTrainer;
-        const wchar_t* slot_badge = training
+        std::wstring slot_badge = training
             ? (red_team
                ? L"LEARNING"
                : (random_trainer
                   ? L"TRAINER · LEARNING"
                   : L"OPPONENT · FROZEN"))
             : L"BATTLE · FROZEN";
+        slot_badge += L" · TRAINED "
+            + std::to_wstring(f.completed_training_episodes);
         text(
             slot_badge, small_format,
             training ? accent_brush : muted_brush,
-            D2D1::RectF(x + 18, y + 52, x + w - 18, y + 72));
+            D2D1::RectF(x + 18, y + 52, x + w - 18, y + 80));
         #endif
 
         draw_integer_bar(
@@ -2625,6 +2677,22 @@ struct ArenaRenderer::Impl
                 D2D1::RectF(826.0f, 674.0f, 956.0f, 704.0f),
                 false);
         }
+        draw_top_button(
+            tuning.audio_muted.load() ? L"MUTED" : L"SOUND",
+            D2D1::RectF(966.0f, 674.0f, 1036.0f, 704.0f),
+            !tuning.audio_muted.load());
+        draw_top_button(
+            L"VOL -",
+            D2D1::RectF(1046.0f, 674.0f, 1110.0f, 704.0f),
+            false);
+        draw_top_button(
+            (std::to_wstring(tuning.audio_volume_percent.load()) + L"%").c_str(),
+            D2D1::RectF(1120.0f, 674.0f, 1178.0f, 704.0f),
+            false);
+        draw_top_button(
+            L"VOL +",
+            D2D1::RectF(1188.0f, 674.0f, 1252.0f, 704.0f),
+            false);
         #endif
 
         if (show_debug) {
