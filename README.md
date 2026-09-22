@@ -12,15 +12,16 @@ FlyArena는 BANC v888/v3 초파리 연결망으로 두 개의 독립적인 신�
 방향 결정과 실행·검증은 실제 프로젝트 환경에서 진행했습니다.
 
 The last user-validated stable combat baseline is **v0.6.4d**. The current
-experimental build is **v0.6.8**: one-click Release data setup, full-loop speed control, compute-limited MAX
-learning, canonical sword reach, body/wing hitboxes, opposing spawns, and Flypack v4 customization.
+experimental build is **v0.6.8**: source-build setup, full-loop speed control,
+compute-limited MAX learning, canonical sword reach, body/wing hitboxes,
+opposing spawns, and Flypack v4 customization.
 
 ## Current architecture
 
 * BANC v888/v3: 188,508 neurons and 13,620,865 directed pairs
 * two independent D3D12 neural-state sets at a 1 ms internal timestep
 * sensory/world control at 50 ms
-* physical combat substeps at at most 5 ms
+* physical combat substeps no larger than 5 ms
 * Win32 + Direct2D/DirectWrite renderer, decoupled from simulation
 * low-level forward, turn, sword-drive, and shield-drive actuators only
 * HIT/BLOCK/PARRY/DODGE classified from physical geometry and timing
@@ -29,20 +30,7 @@ The learner changes a small motor readout layer. It does not modify the BANC
 connectivity pairs and does not add scripted actions such as `attack()` or
 `parry()`.
 
-## Build and verify
-
-```bat
-build_v068.bat
-test_v068_profile_learning.bat
-```
-
-The portable tests cover flypack validation/round-trip, learning continuation
-and freeze, equipment derivation, active-swing HIT, BLOCK/PARRY, unconditional
-wall damage, stamina use, and 60-second HP-result rules.
-
-The public tree keeps only the current v0.6.8 build/test entry points.
-
-## 처음 사용하는 분
+## 현재 배포 상태
 
 > **Windows 실행 파일 배포 일시 중단:** 현재 서명되지 않은 v0.6.8 실행
 > 파일은 로컬 및 GitHub Actions의 Microsoft Defender 검사를 통과하지만,
@@ -53,19 +41,115 @@ The public tree keeps only the current v0.6.8 build/test entry points.
 > Authenticode 서명을 적용한 대체 빌드가 인터넷 다운로드 검사를 통과할
 > 때까지 Release에는 검증 가능한 소스 ZIP만 제공합니다.
 
-개발자는 아래 빌드 명령으로 소스에서 직접 빌드할 수 있습니다. 일반 사용자는
-Microsoft 분석과 인터넷 다운로드 검사를 통과한 Windows 바이너리가 다시
-게시될 때까지 기다려 주세요. Windows ZIP이 복구된 뒤에는 압축을 풀어
-`SETUP_DATA_AND_RUN.bat`를 최초 한 번 실행하고,
-이후 `START_FLYARENA.bat`를 사용하면 됩니다.
+현재 GitHub Release에는 다음 두 파일만 있습니다.
 
-설치, 데이터 준비, MAX 학습, 파일 종류와 문제 해결은
-[한국어 시작 안내](docs/GETTING_STARTED_KO.md)에 정리했습니다.
+- `FlyArena-v0.6.8-Source.zip` — 직접 빌드할 소스 코드
+- `SHA256SUMS.txt` — Source ZIP 무결성 확인용 체크섬
 
-## Run
+`FlyArena-v0.6.8-Windows-x64.zip`은 현재 제공하지 않습니다. 다른 사람이
+재업로드한 EXE를 받거나 Defender 경고를 무시하지 마세요.
 
-* `run_v068_learning_arena.bat` — build and start in Training
-* `run_v068_battle_arena.bat` — build and start in frozen Battle
+## 처음 다운로드부터 실행까지
+
+### 1. 준비물
+
+- Windows 10/11 x64
+- Direct3D 12를 지원하는 GPU와 최신 그래픽 드라이버
+- [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
+  또는 Build Tools. 설치 항목에서 **Desktop development with C++**, MSVC x64,
+  Windows 10/11 SDK를 선택합니다.
+- [Python 3](https://www.python.org/downloads/windows/). 설치할 때
+  **Add Python to PATH**를 선택합니다.
+- 인터넷 연결과 BANC 원자료·변환 파일을 저장할 여유 공간
+
+Git은 필요하지 않습니다. Source ZIP만으로 빌드하고 실행할 수 있습니다.
+
+### 2. Source ZIP 다운로드 및 확인
+
+1. [FlyArena v0.6.8 Release](https://github.com/primaryNK/FlyArena/releases/tag/v0.6.8)의
+   **Assets**에서 `FlyArena-v0.6.8-Source.zip`과 `SHA256SUMS.txt`를 받습니다.
+2. 두 파일이 있는 폴더에서 PowerShell을 열고 다음 명령을 실행합니다.
+
+```powershell
+Get-FileHash .\FlyArena-v0.6.8-Source.zip -Algorithm SHA256
+Get-Content .\SHA256SUMS.txt
+```
+
+두 SHA-256 값이 같아야 합니다. 다르면 압축을 풀거나 실행하지 말고 다시
+다운로드하세요.
+
+### 3. 압축 해제
+
+ZIP을 원하는 폴더에 완전히 풉니다. 이후 명령과 배치 파일은
+`README.md`, `build_v068.bat`, `SETUP_DATA_AND_RUN.bat`이 보이는 프로젝트
+최상위 폴더에서 실행합니다. ZIP 내부에서 직접 실행하지 마세요.
+
+### 4. 가장 쉬운 첫 실행
+
+`SETUP_DATA_AND_RUN.bat`을 실행합니다. Source ZIP에서는 이 배치가 다음 작업을
+순서대로 수행합니다.
+
+1. `build_v068.bat`으로 `bin\FlyArena-v0.6.8.exe` 빌드
+2. 공식 BANC v888 원자료 다운로드
+3. 프로젝트 전용 Python 환경과 필요한 패키지 준비
+4. topology cache와 IO map 생성
+5. FlyArena 실행
+
+첫 데이터 준비는 다운로드와 변환 때문에 오래 걸릴 수 있습니다. 성공한
+파일은 다음 실행에서 재사용되며 매 라운드 다시 다운로드하지 않습니다.
+
+### 5. 단계별로 직접 실행하는 방법
+
+한 번에 실행하지 않으려면 Developer PowerShell 또는 일반 명령 프롬프트에서
+다음 순서로 실행합니다.
+
+```bat
+build_v068.bat
+test_v068_profile_learning.bat
+prepare_banc_latest.bat
+prepare_v061_io_map.bat
+START_FLYARENA.bat
+```
+
+빌드 결과는 `bin\FlyArena-v0.6.8.exe`입니다. 테스트는 `.flypack` 왕복,
+학습 저장·고정, 장비 파생값, 검 충돌, BLOCK/PARRY, 날개 hitbox, 스태미나와
+경기 종료 규칙을 확인합니다.
+
+### 6. 다음 실행
+
+- `START_FLYARENA.bat` — 기존 빌드와 준비된 데이터를 바로 실행
+- `run_v068_learning_arena.bat` — 다시 빌드하고 Training으로 실행
+- `run_v068_battle_arena.bat` — 다시 빌드하고 학습이 고정된 Battle로 실행
+
+소스를 수정했다면 `START_FLYARENA.bat` 전에 `build_v068.bat`을 다시
+실행하세요.
+
+### 7. GPU 사용률과 배속
+
+- 1x~16x와 Battle은 기본 `--gpu-budget 40` 제한을 사용합니다.
+- 더 낮추려면 `run_v068_learning_arena.bat` 또는
+  `run_v068_battle_arena.bat`의 `--gpu-budget 40`을 `20`처럼 낮춥니다.
+- `MAX`는 벽시계 대기와 GPU 제한을 제거하고 가능한 최고 속도로 학습하므로
+  GPU 사용률이 매우 높은 것이 정상입니다. 낮은 사용률이 필요하면 16x 이하를
+  사용하세요.
+- v0.6.8의 제한 계산은 신경 커널뿐 아니라 감각 업로드와 뉴런 결과 readback
+  시간도 포함합니다.
+
+### 8. 자주 생기는 문제
+
+- `vswhere.exe not found` 또는 C++ toolchain 오류: Visual Studio Installer에서
+  **Desktop development with C++**와 Windows SDK를 설치합니다.
+- `Python 3 not found`: Python을 PATH에 추가한 뒤 새 터미널에서 다시 실행합니다.
+- `topology load failed`: `prepare_banc_latest.bat`과
+  `prepare_v061_io_map.bat`을 순서대로 다시 실행합니다.
+- MAX 화면이 끊겨 보임: 계산에 자원을 집중하기 위해 화면은 낮은 빈도로만
+  갱신됩니다. 내부 시뮬레이션과 학습은 계속 진행됩니다.
+- 직접 빌드한 EXE도 Defender가 탐지: 경고를 우회하지 말고 EXE의 SHA-256,
+  탐지명, Defender 보안 인텔리전스 버전을 이슈에 적어 주세요.
+
+더 자세한 설명은 [한국어 시작 안내](docs/GETTING_STARTED_KO.md)를 참고하세요.
+
+## 화면과 실행 모드
 
 The renderer provides:
 
@@ -172,8 +256,8 @@ BANC 데이터와 논문은 FlyArena 소유가 아니며 각 원 권리자의 �
 
 ## Public release status
 
-Windows 빌드·테스트·로컬 Defender 검사, 최종본 소스 스테이징, 태그 기반
-소스 ZIP, SHA-256 체크섬, 인용 정보와 이슈 양식이 준비되어 있습니다. 현재
-서명되지 않은 실행 파일은 Defender의 인터넷 다운로드 탐지가 해결될 때까지
-CI artifact와 Release에서 공개하지 않습니다. 첫 push와 태그 배포 순서는
-[GitHub 공개·배포 안내](docs/GITHUB_RELEASE_KO.md)를 따라가면 됩니다.
+현재 v0.6.8은 태그 기반 Source ZIP과 SHA-256 체크섬만 배포합니다. Windows
+빌드·테스트·로컬 Defender 검사는 CI에서 계속 수행하지만, 서명되지 않은
+실행 파일은 인터넷 다운로드 탐지가 해결될 때까지 CI artifact와 Release에
+공개하지 않습니다. 관리자용 배포 절차는
+[GitHub 공개·배포 안내](docs/GITHUB_RELEASE_KO.md)에 있습니다.

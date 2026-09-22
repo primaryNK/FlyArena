@@ -13,6 +13,18 @@ echo Requirements: Internet connection, Python 3, and free disk space.
 echo Existing completed files are reused on later runs.
 echo.
 
+set "FLYARENA_EXE=%~dp0FlyArena.exe"
+if exist "%FLYARENA_EXE%" goto :application_ready
+if not exist "%~dp0build_v068.bat" goto :application_missing
+
+echo [BUILD] No packaged executable is present; building from source...
+call "%~dp0build_v068.bat"
+if errorlevel 1 goto :build_failed
+set "FLYARENA_EXE=%~dp0bin\FlyArena-v0.6.8.exe"
+if not exist "%FLYARENA_EXE%" goto :build_failed
+
+:application_ready
+
 where py.exe >nul 2>nul
 if not errorlevel 1 goto :python_ready
 where python.exe >nul 2>nul
@@ -33,13 +45,25 @@ if errorlevel 1 goto :failed
 :run
 echo.
 echo [READY] Starting FlyArena...
-"%~dp0FlyArena.exe"
+"%FLYARENA_EXE%"
 exit /b %ERRORLEVEL%
 
 :failed
 echo.
 echo [ERROR] Data setup failed. Review the message above.
 echo Python 3 must be available as py.exe or python.exe.
+pause
+exit /b 1
+
+:build_failed
+echo [ERROR] FlyArena source build failed.
+echo Install Visual Studio with "Desktop development with C++" and a Windows SDK.
+pause
+exit /b 1
+
+:application_missing
+echo [ERROR] Neither FlyArena.exe nor the v0.6.8 source build script was found.
+echo Download and fully extract the official Release archive, then try again.
 pause
 exit /b 1
 
