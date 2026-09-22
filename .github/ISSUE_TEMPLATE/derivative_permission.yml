@@ -1,0 +1,61 @@
+name: Derivative / commercial permission
+description: Request written permission for a public modified work or commercial use
+title: "[Permission] "
+labels: [permission-request]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Filing this request is not approval. Do not post confidential information. Permission exists only after a specific written approval from the FlyArena Licensor.
+  - type: input
+    id: requester
+    attributes:
+      label: Requester
+      description: Your name or organization and a reliable contact method.
+    validations:
+      required: true
+  - type: textarea
+    id: project
+    attributes:
+      label: Proposed project
+      description: Explain it so a non-specialist can understand what you will make.
+    validations:
+      required: true
+  - type: textarea
+    id: flyarena_material
+    attributes:
+      label: FlyArena material used
+      description: Identify code, assets, formats, name/logo, or other material.
+    validations:
+      required: true
+  - type: textarea
+    id: distribution
+    attributes:
+      label: Publication and distribution
+      description: Where will source/binaries be hosted, and under what license?
+    validations:
+      required: true
+  - type: dropdown
+    id: commercial
+    attributes:
+      label: Monetization
+      options:
+        - No commercial use or monetization
+        - Commercial, paid, sponsored, advertised, or monetized
+    validations:
+      required: true
+  - type: textarea
+    id: banc
+    attributes:
+      label: BANC and third-party compliance
+      description: Explain how data will be obtained and how attribution/original licenses will be preserved.
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Acknowledgement
+      options:
+        - label: I understand that this request is not permission and I will wait for explicit written approval before publishing or distributing the proposed work.
+          required: true
+

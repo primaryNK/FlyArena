@@ -1,0 +1,44 @@
+name: Tagged Windows Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify source-available license
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath LICENSE)) {
+            throw 'Public release blocked: LICENSE is missing.'
+          }
+          if (-not (Select-String -LiteralPath LICENSE -SimpleMatch 'FASL-1.0' -Quiet)) {
+            throw 'Public release blocked: expected FASL-1.0 license marker.'
+          }
+
+      - name: Build and test
+        shell: cmd
+        run: |
+          call build_v067.bat
+          if errorlevel 1 exit /b 1
+          call test_v067_profile_learning.bat
+
+      - name: Build portable and clean-source ZIPs
+        shell: pwsh
+        run: |
+          ./tools/package_release.ps1 -Version '${{ github.ref_name }}'
+          ./tools/stage_public_source.ps1 -Version '${{ github.ref_name }}'
+
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create '${{ github.ref_name }}' dist/*.zip dist/SHA256SUMS.txt --generate-notes --verify-tag

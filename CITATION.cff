@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use FlyArena, cite this software and cite the BANC paper/data separately."
+title: "FlyArena"
+type: software
+version: 0.6.7
+date-released: 2026-09-22
+authors:
+  - name: "FlyArena contributors"
+references:
+  - type: article
+    title: "Distributed control circuits across a brain-and-cord connectome"
+    authors:
+      - family-names: "Bates"
+        given-names: "Alexander S."
+      - family-names: "Phelps"
+        given-names: "Jasper S."
+      - family-names: "Kim"
+        given-names: "Minsu"
+    journal: "Nature"
+    volume: 656
+    start: 957
+    end: 970
+    year: 2026
+    doi: "10.1038/s41586-026-10735-w"
+  - type: dataset
+    title: "BANC v888 — Brain-and-nerve-cord connectome"
+    year: 2026
+    doi: "10.7910/DVN/7WTH1N"

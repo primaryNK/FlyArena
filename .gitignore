@@ -1,0 +1,98 @@
+# Local editor / agent state
+.vs/
+.vscode/
+.idea/
+.venv/
+tools/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.agents/
+.codex/
+AGENTS.md
+CODEX_START_PROMPT.md
+README_HANDOFF.md
+docs/CODEX_HANDOFF.md
+archive/
+
+# Build output and private runtime results
+bin/
+obj/
+results/
+*.obj
+*.pdb
+*.ilk
+*.log
+*.farena
+*.fio
+
+# Large or locally generated BANC material
+data/cache/
+data/io/
+data/banc_v888/raw/
+
+# Learned/user state. Tiny fixtures under tests/ remain trackable.
+data/training/*.flytrain
+data/flies/*.flytrain
+
+# Local packaging output
+dist/
+
+# Local development history. Keep these files on disk, but publish only the
+# current v0.6.7 source/release surface.
+/HOTFIX*.md
+/README_V*.md
+/benchmarks/
+/build_v*.bat
+!/build_v067.bat
+/run_v*.bat
+!/run_v067_learning_arena.bat
+!/run_v067_battle_arena.bat
+/test_v*.bat
+!/test_v067_profile_learning.bat
+/reset_v*.bat
+/run_cleanup_*.bat
+/run_latest_*.bat
+/inspect_*.bat
+/force_refresh_banc_latest.bat
+
+# Only the current application entry point and current portable test are part
+# of the public source release.
+/src/sim/*
+!/src/sim/v065_learning_main.cpp
+/src/maintenance/
+/src/tools/
+/src/gpu/
+/tests/*
+!/tests/v065_profile_learning_tests.cpp
+
+# Current public documentation. Older milestone/history files remain local.
+/docs/*.md
+!/docs/README.md
+!/docs/GETTING_STARTED_KO.md
+!/docs/GITHUB_RELEASE_KO.md
+!/docs/CURRENT_VERSION_MATRIX.md
+!/docs/EQUIPMENT_CUSTOMIZATION_SPEC.md
+!/docs/FILE_FORMATS.md
+!/docs/FLY_CUSTOMIZATION_CONTRACT.md
+!/docs/LEARNING_DESIGN.md
+!/docs/MODES_AND_UI_SPEC.md
+!/docs/PUBLIC_RELEASE_MILESTONE.md
+!/docs/V063_ARCHITECTURE.md
+!/docs/V063_COMBAT_FEEDBACK_CONTRACT.md
+!/docs/V063_RENDERING_CONTRACT.md
+!/docs/V067_ACCELERATION_COMBAT_CUSTOMIZATION.md
+
+# Publish only the neutral sample profiles, never local/user fly state.
+/data/flies/*
+!/data/flies/Ruby.flypack
+!/data/flies/Azure.flypack
+
+# Exact public helper set; local inspection/refresh helpers stay private.
+/tools/*
+!/tools/build_banc_io_map.py
+!/tools/convert_banc_latest.py
+!/tools/package_release.ps1
+!/tools/prepare_banc_latest.ps1
+!/tools/prepare_v061_io_map.ps1
+!/tools/stage_public_source.ps1

@@ -1,0 +1,32 @@
+name: Bug report
+description: Report a reproducible FlyArena problem
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: FlyArena version / commit
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Windows, GPU, and driver details
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Relevant summary or telemetry (remove private data first)
+

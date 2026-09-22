@@ -1,0 +1,140 @@
+FlyArena Source-Available License 1.0 (FASL-1.0)
+
+Copyright (c) 2026 NKprime. All rights reserved.
+
+IMPORTANT: THIS IS A SOURCE-AVAILABLE LICENSE, NOT AN OPEN-SOURCE LICENSE.
+
+1. Definitions
+
+"FlyArena" means the original source code, executable code, documentation,
+procedural visual assets, and other material distributed with this License and
+owned by the Licensor.
+
+"Licensor" means the copyright holder identified above or a person or entity
+formally authorized by that copyright holder.
+
+"You" means the individual or legal entity exercising rights under this
+License.
+
+"Modified Work" means any modification, adaptation, translation, port,
+extension, derivative game, or other work based on or incorporating FlyArena,
+other than an exact unmodified copy.
+
+"Share" means to provide material to another person or entity, including by
+publication, distribution, sale, sublicensing, public hosting, or making it
+available through a public repository or download service.
+
+2. Rights Granted Without Additional Permission
+
+Subject to this License, the Licensor grants You a limited, worldwide,
+non-exclusive, non-transferable, revocable, royalty-free license to:
+
+a. view, download, study, and evaluate FlyArena;
+
+b. compile and run FlyArena for personal, educational, or non-commercial
+research purposes;
+
+c. create and use Modified Works privately, provided that You do not Share
+them; and
+
+d. Share exact, unmodified copies of FlyArena for non-commercial purposes only,
+provided that You include this License, all copyright notices, third-party
+notices, data-license notices, and disclaimers, and do not charge any fee beyond
+reasonable media or transmission cost.
+
+Rights necessarily granted by the terms of a hosting platform, including
+GitHub's permission to view and fork a public repository through that
+platform's functionality, are not expanded by this License.
+
+3. Prior Written Permission Required
+
+Unless the Licensor gives You separate, explicit written permission, You may
+not:
+
+a. Share a Modified Work, including a modified public fork;
+
+b. publish or distribute a game, simulation, port, mod, service, library,
+dataset package, or other derivative product based on FlyArena;
+
+c. use FlyArena or a Modified Work for commercial purposes, paid services,
+advertising-supported distribution, fundraising products, or monetized
+content;
+
+d. sublicense, sell, rent, lease, or otherwise commercially exploit FlyArena;
+
+e. remove or obscure copyright, attribution, license, scientific-citation,
+third-party, or data-license notices; or
+
+f. state or imply that the Licensor endorses You or Your work.
+
+Submitting a request, opening an issue, creating a fork, or submitting a pull
+request does not itself grant permission. Permission exists only when the
+Licensor provides a specific written approval describing its scope.
+
+4. Contributions
+
+No contribution is accepted merely because it is submitted. Contributions to
+the official FlyArena project are accepted only under the FlyArena Contributor
+License Agreement or another written agreement approved by the Licensor.
+
+5. Third-Party Material and BANC Data
+
+This License applies only to rights in FlyArena that the Licensor owns or is
+authorized to license. It does not replace, narrow, sublicense, or add
+restrictions to third-party material.
+
+In particular, the BANC connectome data and BANC project material remain under
+their applicable licenses, including Creative Commons Attribution 4.0 where
+stated by their rights holders. You may exercise rights granted directly by
+those third-party licenses independently of this License. See
+DATA_LICENSES.md and THIRD_PARTY_NOTICES.md.
+
+Facts, ideas, scientific findings, and material in the public domain are not
+restricted by this License to the extent they are not protected by applicable
+copyright or similar rights.
+
+6. No Trademark License
+
+This License grants no right to use the names "FlyArena," its logos, or other
+project marks to identify or promote a Modified Work, product, or service,
+except for truthful statements that Your work is compatible with or based on
+FlyArena and is not endorsed by the Licensor.
+
+7. No Patent License
+
+No patent rights are granted except to the minimum extent, if any, that
+applicable law requires for exercise of the copyright permissions expressly
+granted in Section 2.
+
+8. Compliance and Termination
+
+Your rights under this License terminate automatically if You breach it. If the
+breach is curable and You cure it within 30 days after discovering or receiving
+notice of the breach, the Licensor may confirm reinstatement in writing. The
+Licensor retains all rights and remedies available under applicable law.
+
+9. Disclaimer of Warranty
+
+FLYARENA IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+NONINFRINGEMENT, ACCURACY, SAFETY, OR BIOLOGICAL VALIDITY. YOU USE FLYARENA AT
+YOUR OWN RISK.
+
+10. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE LICENSOR WILL NOT BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES, OR
+FOR LOSS OF DATA, PROFITS, RESEARCH RESULTS, OR BUSINESS, ARISING FROM FLYARENA
+OR THIS LICENSE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+11. Reservation of Rights and Severability
+
+All rights not expressly granted are reserved. If any provision is held
+unenforceable, it will be limited or removed only to the minimum extent
+necessary, and the remaining provisions will continue in effect.
+
+12. Permission Requests
+
+See PERMISSION_REQUESTS.md for the information required when requesting
+permission for a Modified Work or commercial use.
+
