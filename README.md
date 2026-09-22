@@ -49,13 +49,14 @@ The public tree keeps only the current v0.6.8 build/test entry points.
 > 인터넷에서 내려받을 때 Defender 클라우드 검사에서
 > `Trojan:Win32/Wacatac.B!ml`로 탐지됩니다. 현재 조사 결과로는 오탐이
 > 의심되지만 Microsoft 분석 전에는 확정할 수 없습니다. 경고를 무시하거나
-> Defender를 끄지 마세요. 탐지 해제 또는 신뢰할 수 있는 Authenticode 서명이
-> 완료될 때까지 Release에는 검증 가능한 소스 ZIP만 제공합니다.
+> Defender를 끄지 마세요. Microsoft가 탐지를 해제하거나, 신뢰할 수 있는
+> Authenticode 서명을 적용한 대체 빌드가 인터넷 다운로드 검사를 통과할
+> 때까지 Release에는 검증 가능한 소스 ZIP만 제공합니다.
 
 개발자는 아래 빌드 명령으로 소스에서 직접 빌드할 수 있습니다. 일반 사용자는
-Microsoft 분석을 통과한 Windows 바이너리가 다시 게시될 때까지 기다려
-주세요. Windows ZIP이
-복구된 뒤에는 압축을 풀어 `SETUP_DATA_AND_RUN.bat`를 최초 한 번 실행하고,
+Microsoft 분석과 인터넷 다운로드 검사를 통과한 Windows 바이너리가 다시
+게시될 때까지 기다려 주세요. Windows ZIP이 복구된 뒤에는 압축을 풀어
+`SETUP_DATA_AND_RUN.bat`를 최초 한 번 실행하고,
 이후 `START_FLYARENA.bat`를 사용하면 됩니다.
 
 설치, 데이터 준비, MAX 학습, 파일 종류와 문제 해결은

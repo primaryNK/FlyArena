@@ -34,5 +34,5 @@ jobs:
       # Do not upload the unsigned executable. Defender's local command-line
       # scan passes, but its Internet-origin cloud reputation scan currently
       # classifies the downloaded binary as Wacatac.B!ml. Distribution stays
-      # disabled until Microsoft clears the false positive or the binary is
-      # Authenticode-signed by a trusted identity.
+      # disabled until Microsoft clears the detection, or a replacement is
+      # Authenticode-signed and passes an Internet-origin verification.

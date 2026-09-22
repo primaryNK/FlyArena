@@ -78,8 +78,9 @@ GitHub 저장소의 **Actions** 탭에서 `Tagged Source Release`가 성공했�
 탐지됩니다. 조사상 오탐이 의심되지만 Microsoft 분석 전에는 확정할 수
 없으므로 CI artifact와 Windows Release ZIP 자동 공개는 의도적으로
 꺼 두었습니다. 단순히 ZIP 형식을 바꾸거나 사용자에게 Defender 해제를
-안내하지 말고, Microsoft 분석·탐지 해제 또는 신뢰할 수 있는 Authenticode 서명
-뒤에만 바이너리 배포 단계를 복구하세요.
+안내하지 말고, Microsoft가 탐지를 해제하거나 신뢰할 수 있는 Authenticode
+서명을 적용한 대체 빌드가 인터넷 다운로드 검사를 통과한 뒤에만 바이너리
+배포 단계를 복구하세요.
 
 ## 5. 수동 배포가 필요할 때
 

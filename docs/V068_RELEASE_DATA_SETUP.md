@@ -23,9 +23,9 @@ v0.6.8 executable that passes those local scans is classified as
 `Trojan:Win32/Wacatac.B!ml` by Defender's Internet-origin cloud reputation
 path. The current evidence suggests a false positive, but that conclusion is
 not final until Microsoft analyzes the sample. The public Windows artifact is
-therefore withheld; tagged releases are source-only until Microsoft clears the
-detection or the executable is Authenticode-signed by a trusted identity.
-Users should not bypass Defender.
+therefore withheld. Tagged releases remain source-only until Microsoft clears
+the detection, or a replacement is Authenticode-signed by a trusted identity
+and passes an Internet-origin verification. Users should not bypass Defender.
 
 ## Full-loop training speed
 
