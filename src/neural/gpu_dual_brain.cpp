@@ -16,6 +16,7 @@
 #include <wrl.h>
 
 #include "gpu_dual_brain.h"
+#include "gpu_pacing.h"
 
 #include <algorithm>
 #include <chrono>
@@ -362,6 +363,7 @@ struct GpuDualBrain::Impl {
     uint32_t total_steps = 0;
     uint32_t chunk_steps = 0;
     uint32_t current_step = 0;
+    double pending_auxiliary_wall_ms = 0.0;
 
     std::string adapter_name;
     uint64_t dedicated_vram = 0;
@@ -986,12 +988,19 @@ bool GpuDualBrain::update_stimulation_rates(
         return false;
     }
     const auto srv_state = D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
-    return g.upload_vector(
+    const auto started = std::chrono::steady_clock::now();
+    const bool uploaded = g.upload_vector(
         stimulation_rate_hz,
         D3D12_RESOURCE_FLAG_NONE,
         srv_state,
         g.stim_rate,
         err);
+    if (uploaded) {
+        g.pending_auxiliary_wall_ms +=
+            std::chrono::duration<double, std::milli>(
+                std::chrono::steady_clock::now() - started).count();
+    }
+    return uploaded;
 }
 
 bool GpuDualBrain::advance(
@@ -1024,6 +1033,8 @@ bool GpuDualBrain::advance(
 
     double compute_total = 0.0;
     double sleep_total = 0.0;
+    const double upload_wall_ms = g.pending_auxiliary_wall_ms;
+    g.pending_auxiliary_wall_ms = 0.0;
     uint32_t remaining = requested;
     while (remaining > 0) {
         const uint32_t steps = std::min<uint32_t>(g.chunk_steps, remaining);
@@ -1031,39 +1042,42 @@ bool GpuDualBrain::advance(
         if (!g.dispatch_chunk(g.current_step, steps, compute_ms, err)) return false;
         compute_total += compute_ms;
 
-        // A non-positive multiplier is the explicit Training MAX sentinel.
-        // It removes both wall-clock pacing and the interactive GPU-duty
-        // sleep. Neural dt and world dt remain unchanged, so this accelerates
-        // simulated time without changing learning dynamics.
-        if (!g.config.unlimited && realtime_multiplier > 0.0f) {
-            const double simulated_ms = static_cast<double>(steps) * g.config.dt_ms;
-            double target_total_ms =
-                g.config.realtime_pacing && realtime_multiplier > 0.0f
-                ? simulated_ms / static_cast<double>(realtime_multiplier)
-                : 0.0;
-            const double duty = std::clamp<double>(g.config.gpu_duty_target, 0.05, 1.0);
-            target_total_ms = std::max(target_total_ms, compute_ms / duty);
-            const double sleep_ms = std::max(0.0, target_total_ms - compute_ms);
-            if (sleep_ms > 0.0) {
-                std::this_thread::sleep_for(
-                    std::chrono::duration<double, std::milli>(sleep_ms));
-                sleep_total += sleep_ms;
-            }
-        }
-
         g.current_step += steps;
         remaining -= steps;
     }
 
+    const auto readback_started = std::chrono::steady_clock::now();
     if (!g.readback(
         g.neuron_spike_counts,
         g.total_neurons,
         step.cumulative_neuron_spike_counts,
         err)) return false;
+    const double readback_wall_ms =
+        std::chrono::duration<double, std::milli>(
+            std::chrono::steady_clock::now() - readback_started).count();
+
+    const double auxiliary_total = upload_wall_ms + readback_wall_ms;
+    const double active_total = compute_total + auxiliary_total;
+    const double pacing_simulated_ms = g.config.realtime_pacing
+        ? static_cast<double>(requested) * g.config.dt_ms
+        : 0.0;
+    const double sleep_ms = gpu_pacing_sleep_ms(
+        active_total,
+        pacing_simulated_ms,
+        static_cast<double>(realtime_multiplier),
+        static_cast<double>(g.config.gpu_duty_target),
+        g.config.unlimited);
+    if (sleep_ms > 0.0) {
+        std::this_thread::sleep_for(
+            std::chrono::duration<double, std::milli>(sleep_ms));
+        sleep_total += sleep_ms;
+    }
 
     step.current_step = g.current_step;
     step.sim_time_ms = static_cast<float>(g.current_step) * g.config.dt_ms;
     step.gpu_compute_wall_ms = compute_total;
+    step.gpu_auxiliary_wall_ms = auxiliary_total;
+    step.gpu_active_wall_ms = active_total;
     step.scheduled_sleep_ms = sleep_total;
     return true;
 }

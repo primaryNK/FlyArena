@@ -3,6 +3,7 @@
 ## 처음 보는 분
 
 - `GETTING_STARTED_KO.md` — 설치, 데이터 준비, Training/Battle/MAX, 파일 설명
+- `MICROSOFT_FALSE_POSITIVE_FOLLOWUP_KO.md` — Defender 심사 결과 전달 양식과 후속 조치
 - `GITHUB_RELEASE_KO.md` — 첫 저장소 생성, push, 태그 자동 배포 절차
 - `CURRENT_VERSION_MATRIX.md` — 현재 안정판과 실험판의 차이
 

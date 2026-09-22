@@ -89,6 +89,8 @@ struct NeuralStepResult {
     uint32_t current_step = 0;
     float sim_time_ms = 0.0f;
     double gpu_compute_wall_ms = 0.0;
+    double gpu_auxiliary_wall_ms = 0.0;
+    double gpu_active_wall_ms = 0.0;
     double scheduled_sleep_ms = 0.0;
 
     // Cumulative since initialize(). Caller can subtract the previous snapshot.

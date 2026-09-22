@@ -43,9 +43,12 @@ physical fight and learning continue at the hardware limit.
 
 GPU duty behavior is now explicit: 1x–16x Training and Battle honor the
 configured `--gpu-budget` (40% in the supplied launchers), including inside the
-neural dispatch loop. MAX intentionally bypasses that duty sleep and can show
-near-100% GPU usage because its purpose is maximum-throughput learning. Select
-16x or lower when temperature, fan noise, or power use matters more than speed.
+neural dispatch loop. The duty calculation includes neural compute, sensory
+buffer upload, and neuron-count readback rather than counting compute dispatch
+alone. Telemetry schema 4 records those active times and scheduled sleep
+separately. MAX intentionally bypasses that duty sleep and can show near-100%
+GPU usage because its purpose is maximum-throughput learning. Select 16x or
+lower when temperature, fan noise, or power use matters more than speed.
 
 ## Spawn, sword reach, and wing hitboxes
 

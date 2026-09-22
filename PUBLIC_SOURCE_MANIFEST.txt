@@ -34,6 +34,7 @@ docs/FLY_CUSTOMIZATION_CONTRACT.md
 docs/GETTING_STARTED_KO.md
 docs/GITHUB_RELEASE_KO.md
 docs/LEARNING_DESIGN.md
+docs/MICROSOFT_FALSE_POSITIVE_FOLLOWUP_KO.md
 docs/MODES_AND_UI_SPEC.md
 docs/PUBLIC_RELEASE_MILESTONE.md
 docs/README.md
@@ -57,6 +58,7 @@ src/learning/plastic_readout.h
 src/learning/reward_balance.h
 src/neural/gpu_dual_brain.cpp
 src/neural/gpu_dual_brain.h
+src/neural/gpu_pacing.h
 src/profile/fly_profile.cpp
 src/profile/fly_profile.h
 src/render/render_snapshot.h

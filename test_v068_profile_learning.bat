@@ -10,7 +10,7 @@ if errorlevel 1 exit /b 1
 if not exist "%ROOT%obj\v068_tests" mkdir "%ROOT%obj\v068_tests"
 pushd "%ROOT%obj\v068_tests"
 cl /nologo /O2 /std:c++20 /EHsc /DNOMINMAX /W4 ^
-  /I"%ROOT%src\arena" /I"%ROOT%src\render" /I"%ROOT%src\learning" /I"%ROOT%src\profile" ^
+  /I"%ROOT%src\arena" /I"%ROOT%src\render" /I"%ROOT%src\learning" /I"%ROOT%src\profile" /I"%ROOT%src\neural" ^
   "%ROOT%tests\v065_profile_learning_tests.cpp" ^
   "%ROOT%src\arena\arena_sim.cpp" ^
   "%ROOT%src\arena\equipment_combat.cpp" ^

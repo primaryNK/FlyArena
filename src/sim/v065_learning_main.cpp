@@ -1879,7 +1879,8 @@ int simulation_thread_main(
         << "blue_hits,blue_blocks,blue_parries,blue_dodges,"
         << "pair_distance,"
         << "sensitivity,forward_gain,turn_gain,"
-        << "neural_compute_ms\n";
+        << "neural_compute_ms,neural_gpu_auxiliary_ms,"
+        << "neural_gpu_active_ms,gpu_scheduled_sleep_ms\n";
 
     int32_t match_result = 0;
     std::string result_reason;
@@ -1896,6 +1897,10 @@ int simulation_thread_main(
     AutomaticRewardBalancer blue_reward_balancer;
     uint64_t training_ticks = 0;
     uint64_t battle_ticks = 0;
+    double neural_gpu_compute_total_ms = 0.0;
+    double neural_gpu_auxiliary_total_ms = 0.0;
+    double neural_gpu_active_total_ms = 0.0;
+    double gpu_scheduled_sleep_total_ms = 0.0;
     uint64_t mode_switch_count = 0;
     uint64_t handled_mode_revision = tuning.mode_revision.load();
 
@@ -2028,6 +2033,10 @@ int simulation_thread_main(
                 cli.world_step_ms);
             return 12;
         }
+        neural_gpu_compute_total_ms += step.gpu_compute_wall_ms;
+        neural_gpu_auxiliary_total_ms += step.gpu_auxiliary_wall_ms;
+        neural_gpu_active_total_ms += step.gpu_active_wall_ms;
+        gpu_scheduled_sleep_total_ms += step.scheduled_sleep_ms;
 
         const NeuralReadout red_neural =
             readout_for(
@@ -2440,7 +2449,10 @@ int simulation_thread_main(
             << tuning.sensitivity.load() << ','
             << tuning.forward_gain.load() << ','
             << tuning.turn_gain.load() << ','
-            << step.gpu_compute_wall_ms
+            << step.gpu_compute_wall_ms << ','
+            << step.gpu_auxiliary_wall_ms << ','
+            << step.gpu_active_wall_ms << ','
+            << step.scheduled_sleep_ms
             << '\n';
         }
 
@@ -2561,7 +2573,7 @@ int simulation_thread_main(
 
     summary
         << "FlyArena v0.6.8 portable-data-setup arena\n"
-        << "combat_telemetry_schema_version=3\n"
+        << "combat_telemetry_schema_version=4\n"
         << "session_mode="
         << (open_ended ? "window_lifetime" : "finite") << "\n"
         << "episode_number=" << tuning.episode_number.load() << "\n"
@@ -2690,6 +2702,20 @@ int simulation_thread_main(
         << "max_training_bypasses_gpu_duty_limit="
         << (red_learning_enabled
             && tuning.training_speed_option.load() == 5 ? 1 : 0) << "\n"
+        << "neural_gpu_compute_total_ms="
+        << neural_gpu_compute_total_ms << "\n"
+        << "neural_gpu_auxiliary_total_ms="
+        << neural_gpu_auxiliary_total_ms << "\n"
+        << "neural_gpu_active_total_ms="
+        << neural_gpu_active_total_ms << "\n"
+        << "gpu_scheduled_sleep_total_ms="
+        << gpu_scheduled_sleep_total_ms << "\n"
+        << "accounted_neural_gpu_duty_percent="
+        << (100.0 * neural_gpu_active_total_ms
+            / std::max(
+                0.001,
+                neural_gpu_active_total_ms
+                    + gpu_scheduled_sleep_total_ms)) << "\n"
         << "measured_simulation_multiplier="
         << tuning.measured_simulation_multiplier.load() << "\n"
         << "training_ticks=" << training_ticks << "\n"

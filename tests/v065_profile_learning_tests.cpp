@@ -3,6 +3,7 @@
 #include "arena_sim.h"
 #include "equipment_combat.h"
 #include "match_rules.h"
+#include "gpu_pacing.h"
 #include "runtime_tuning.h"
 
 #include <chrono>
@@ -226,6 +227,12 @@ void test_training_slot_commands() {
         "finite Training/Battle lost neural GPU-duty pacing");
     require(neural_pacing_multiplier(true, 5) == 0.0f,
         "Training MAX stopped using the unlimited-compute sentinel");
+    require(std::fabs(gpu_pacing_sleep_ms(
+                40.0, 50.0, 16.0, 0.40, false) - 60.0) < 1e-6,
+        "GPU pacing did not include upload/readback activity in its duty cap");
+    require(gpu_pacing_sleep_ms(
+                40.0, 50.0, 0.0, 0.40, false) == 0.0,
+        "MAX unexpectedly retained a GPU-duty sleep");
 
     const auto random_permissions = policy_mutation_permissions(
         AppMode::Training, TrainingSubmode::RandomTrainer);
