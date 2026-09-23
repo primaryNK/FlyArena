@@ -1,3 +1,6 @@
+> This agreement is accepted electronically through CLA Assistant when
+> contributing to the official FlyArena repository.
+
 # FlyArena Contributor License Agreement 1.0
 
 This agreement applies when the FlyArena Licensor accepts a contribution.
