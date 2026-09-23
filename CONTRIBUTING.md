@@ -17,9 +17,14 @@ If you would like to contribute:
 6. Open a Pull Request describing the change and how it was tested.
 
 By submitting a contribution, you agree to follow the contribution process
-described here. Before a contribution can be merged, the contributor must
-explicitly accept the terms in
-[CONTRIBUTOR_LICENSE_AGREEMENT.md](CONTRIBUTOR_LICENSE_AGREEMENT.md).
+described here.
+
+Before a contribution can be accepted, the contributor must accept the
+[Contributor License Agreement](CONTRIBUTOR_LICENSE_AGREEMENT.md).
+
+CLA acceptance is managed through **CLA Assistant** when a Pull Request is opened.
+Contributors must complete the CLA Assistant signing process before their
+Pull Request can be merged.
 
 Please note that FlyArena is source-available under FASL-1.0 rather than an
 OSI-approved open-source project. Permission to contribute to the official
@@ -53,6 +58,7 @@ fixtures are welcome.
 - Check that no private files or credentials are included.
 - Explain what changed and why.
 - Explain how the change was tested.
+- Complete the CLA Assistant signing process when requested on the Pull Request.
 
 See `LICENSE_GUIDE_KO.md` and `PERMISSION_REQUESTS.md` for the project's
 distribution and derivative-work rules.
