@@ -1,4 +1,4 @@
-FlyArena Source-Available License 1.0 (FASL-1.0)
+FlyArena Source-Available License 1.1 (FASL-1.1)
 
 Copyright (c) 2026 NKprime. All rights reserved.
 
@@ -24,6 +24,10 @@ other than an exact unmodified copy.
 publication, distribution, sale, sublicensing, public hosting, or making it
 available through a public repository or download service.
 
+"Official Repository" means the FlyArena source repository maintained by the
+Licensor at https://github.com/primaryNK/FlyArena, or a successor repository
+formally designated by the Licensor.
+
 2. Rights Granted Without Additional Permission
 
 Subject to this License, the Licensor grants You a limited, worldwide,
@@ -42,6 +46,22 @@ provided that You include this License, all copyright notices, third-party
 notices, data-license notices, and disclaimers, and do not charge any fee beyond
 reasonable media or transmission cost.
 
+e. create a public fork of FlyArena and Share modifications through that fork
+solely for the purpose of preparing, submitting, discussing, reviewing, or
+updating a contribution to the Official Repository, provided that:
+
+   i. the fork or modification is not presented or distributed as an
+   independent FlyArena release, product, mod, port, or derivative project;
+
+   ii. no modified executable release or other independently packaged
+   distribution is published under this exception; and
+
+   iii. any contribution submitted to the Official Repository remains subject
+   to Section 4 and the FlyArena Contributor License Agreement.
+
+This limited contribution-fork permission does not grant permission to use the
+fork for an independently distributed Modified Work or for any commercial use.
+
 Rights necessarily granted by the terms of a hosting platform, including
 GitHub's permission to view and fork a public repository through that
 platform's functionality, are not expanded by this License.
@@ -51,7 +71,8 @@ platform's functionality, are not expanded by this License.
 Unless the Licensor gives You separate, explicit written permission, You may
 not:
 
-a. Share a Modified Work, including a modified public fork;
+a. Share a Modified Work, including a modified public fork, except as expressly
+permitted for contributions under Section 2(e);
 
 b. publish or distribute a game, simulation, port, mod, service, library,
 dataset package, or other derivative product based on FlyArena;
@@ -67,14 +88,22 @@ third-party, or data-license notices; or
 
 f. state or imply that the Licensor endorses You or Your work.
 
-Submitting a request, opening an issue, creating a fork, or submitting a pull
-request does not itself grant permission. Permission exists only when the
-Licensor provides a specific written approval describing its scope.
+Except for the limited contribution-fork permission granted by Section 2(e),
+submitting a request, opening an issue, creating a fork, or submitting a pull
+request does not itself grant permission to Share a Modified Work.
+
+Any additional permission exists only when the Licensor provides a specific
+written approval describing its scope.
 
 4. Contributions
 
+The limited permission in Section 2(e) allows a contributor to prepare and
+submit changes to the Official Repository. It does not mean that a contribution
+has been accepted or grant permission to independently distribute the
+contributor's Modified Work.
+
 No contribution is accepted merely because it is submitted. Contributions to
-the official FlyArena project are accepted only under the FlyArena Contributor
+the Official Repository are accepted only under the FlyArena Contributor
 License Agreement or another written agreement approved by the Licensor.
 
 5. Third-Party Material and BANC Data
