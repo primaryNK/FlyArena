@@ -32,6 +32,19 @@ repository does not automatically grant permission to publicly distribute
 derivative versions, mods, ports, or commercial products. See [LICENSE](LICENSE)
 for details.
 
+## Changes that require prior discussion
+
+Please open an Issue or Discussion before implementing changes that affect:
+
+- neural dynamics or BANC interpretation
+- learning/reward behavior
+- `.flypack` or `.flytrain` compatibility
+- security or file import behavior
+- build/release infrastructure
+- core combat semantics
+
+Large architectural changes may be declined even if they build successfully.
+
 ## Project rules
 
 Keep neural outputs at the actuator level: forward thrust, turn, sword drive,
